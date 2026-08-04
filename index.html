@@ -164,19 +164,23 @@
         }
         .summary-mini {
             display: flex;
-            gap: 12px;
             flex-wrap: wrap;
+            gap: 12px 18px;
             padding: 8px 4px;
             border-bottom: 1px solid #e2e8f0;
             margin-bottom: 12px;
+            font-size: 13px;
         }
         .summary-mini .item {
-            font-size: 13px;
             font-weight: 500;
         }
         .summary-mini .item .num {
             color: #e67e22;
             font-weight: 700;
+        }
+        .summary-mini .item .half {
+            color: #64748b;
+            font-weight: 400;
         }
         .table-wrapper {
             overflow-x: auto;
@@ -622,6 +626,15 @@
                     <input type="date" id="filterDateFrom" style="display:none;" />
                     <input type="date" id="filterDateTo" style="display:none;" />
                     <button class="btn-secondary" onclick="applyFilters()">Apply</button>
+                    <!-- NEW: Quality filter -->
+                    <select id="filterQuality">
+                        <option value="all">All Qualities</option>
+                        <option value="B">B</option>
+                        <option value="B+">B+</option>
+                        <option value="C+">C+</option>
+                        <option value="BS">BS</option>
+                        <option value="MB">MB</option>
+                    </select>
                     <select id="filterWorker"><option value="all">All Workers</option></select>
                     <button class="btn-secondary" onclick="resetFilters()">Reset</button>
                 </div>
@@ -634,7 +647,7 @@
                 </div>
                 <div class="table-footer">
                     <span id="entryCount">0 entries</span>
-                    <span id="totalFullBoxes">Total: 0.0 full boxes</span>
+                    <span id="totalFullBoxes">Total: 0 full, 0 half</span>
                 </div>
             </div>
         </div>
@@ -734,7 +747,6 @@
         const STORAGE_WORKERS = 'salmon_workers';
 
         function loadEntries() { return storage.get(STORAGE_ENTRIES) || []; }
-
         function saveEntries(data) { storage.set(STORAGE_ENTRIES, data); }
 
         function loadWorkers() {
@@ -751,13 +763,13 @@
             saveWorkers(defaults);
             return defaults;
         }
-
         function saveWorkers(data) { storage.set(STORAGE_WORKERS, data); }
 
         let entries = loadEntries();
         let workers = loadWorkers();
         let editingEntryId = null;
         let selectedWorkerNum = null;
+        let editingWorkerNumber = null;
 
         // ─── HELPERS ──────────────────────────────────
         function todayStr() { return new Date().toISOString().slice(0, 10); }
@@ -766,16 +778,18 @@
 
         function getCountsToday() {
             const t = todayStr();
-            const counts = { 'B': 0, 'B+': 0, 'C+': 0, 'BS': 0, 'MB': 0 };
+            const counts = { 'B': { full: 0, half: 0 }, 'B+': { full: 0, half: 0 }, 'C+': { full: 0, half: 0 }, 'BS': { full: 0, half: 0 }, 'MB': { full: 0, half: 0 } };
             entries.forEach(e => {
-                if (e.date === t && counts[e.quality] !== undefined) counts[e.quality] += e.total;
+                if (e.date === t && counts[e.quality]) {
+                    if (e.boxType === 'full') counts[e.quality].full += e.boxCount;
+                    else counts[e.quality].half += e.boxCount;
+                }
             });
             return counts;
         }
 
         // ─── TOAST ────────────────────────────────────
         let toastTimeout;
-
         function showToast(msg, type = 'info') {
             const el = document.getElementById('toast');
             if (!el) { alert(msg); return; }
@@ -847,7 +861,6 @@
             if (!quality) { showToast('Quality required.', 'error'); return; }
             if (isNaN(boxCount) || boxCount <= 0) { showToast('Enter valid box count.', 'error'); return; }
 
-            const total = boxCount * (boxType === 'half' ? 0.5 : 1);
             const entry = {
                 id: editingEntryId || Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7),
                 date,
@@ -855,7 +868,8 @@
                 boxCount,
                 boxType,
                 workerNum,
-                total,
+                // total is stored for compatibility but we now track full/half separately
+                total: boxCount * (boxType === 'half' ? 0.5 : 1),
                 updatedAt: new Date().toISOString()
             };
 
@@ -881,7 +895,8 @@
             const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
             let html = '';
             qualities.forEach(q => {
-                const count = counts[q] || 0;
+                const total = counts[q].full + counts[q].half; // show total boxes (full + half) but they want separate? For button we keep total boxes for quick view.
+                const count = total;
                 const cls = 'quality-' + q.replace('+', 'plus');
                 html += `
                     <div class="q-btn ${cls}" onclick="openModal('${q}')">
@@ -915,6 +930,10 @@
                 if (from) filtered = filtered.filter(e => e.date >= from);
                 if (to) filtered = filtered.filter(e => e.date <= to);
             }
+            // Quality filter
+            const qf = document.getElementById('filterQuality').value;
+            if (qf !== 'all') filtered = filtered.filter(e => e.quality === qf);
+            // Worker filter
             const wv = document.getElementById('filterWorker').value;
             if (wv !== 'all' && wv) {
                 const num = parseInt(wv);
@@ -926,16 +945,24 @@
         function renderSummaryMini(filtered) {
             const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
             const totals = {};
-            qualities.forEach(q => totals[q] = 0);
-            let grand = 0;
+            qualities.forEach(q => totals[q] = { full: 0, half: 0 });
+            let grandFull = 0, grandHalf = 0;
             filtered.forEach(e => {
-                if (totals[e.quality] !== undefined) totals[e.quality] += e.total;
-                grand += e.total;
+                if (totals[e.quality]) {
+                    if (e.boxType === 'full') totals[e.quality].full += e.boxCount;
+                    else totals[e.quality].half += e.boxCount;
+                }
+                if (e.boxType === 'full') grandFull += e.boxCount;
+                else grandHalf += e.boxCount;
             });
-            let html = `<span class="item">📊 Total: <span class="num">${grand.toFixed(1)}</span></span>`;
+
+            let html = `<span class="item">📦 Total: <span class="num">${grandFull}</span> full + <span class="num">${grandHalf}</span> half</span>`;
             qualities.forEach(q => {
-                const val = totals[q] || 0;
-                if (val > 0) html += `<span class="item">${q}: <span class="num">${val.toFixed(1)}</span></span>`;
+                const f = totals[q].full;
+                const h = totals[q].half;
+                if (f > 0 || h > 0) {
+                    html += `<span class="item">${q}: <span class="num">${f}</span> full + <span class="half">${h}</span> half</span>`;
+                }
             });
             document.getElementById('summaryMini').innerHTML = html;
         }
@@ -945,7 +972,7 @@
             if (filtered.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">📭 No entries.</div></td></tr>`;
                 document.getElementById('entryCount').textContent = '0 entries';
-                document.getElementById('totalFullBoxes').textContent = 'Total: 0.0 full boxes';
+                document.getElementById('totalFullBoxes').textContent = 'Total: 0 full, 0 half';
                 return;
             }
             const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
@@ -971,9 +998,14 @@
                 `;
             });
             tbody.innerHTML = rows;
-            const totalBoxes = filtered.reduce((s, e) => s + e.total, 0);
+            // compute full/half for footer
+            let totalFull = 0, totalHalf = 0;
+            filtered.forEach(e => {
+                if (e.boxType === 'full') totalFull += e.boxCount;
+                else totalHalf += e.boxCount;
+            });
             document.getElementById('entryCount').textContent = `${filtered.length} entries`;
-            document.getElementById('totalFullBoxes').textContent = `Total: ${totalBoxes.toFixed(1)} full boxes`;
+            document.getElementById('totalFullBoxes').textContent = `Total: ${totalFull} full, ${totalHalf} half`;
         }
 
         function renderWorkers() {
@@ -1008,7 +1040,6 @@
             renderSummaryMini(filtered);
             renderTable(filtered);
             renderWorkers();
-            // re-populate filter worker dropdown
             populateFilterWorker();
         }
 
@@ -1057,8 +1088,6 @@
         }
 
         // ─── CRUD WORKERS ─────────────────────────────
-        let editingWorkerNumber = null;
-
         function handleWorkerSubmit() {
             const num = parseInt(document.getElementById('workerNumber').value);
             const name = document.getElementById('workerName').value.trim();
@@ -1132,6 +1161,7 @@
             document.getElementById('filterDateTo').style.display = 'none';
             document.getElementById('filterDateFrom').value = '';
             document.getElementById('filterDateTo').value = '';
+            document.getElementById('filterQuality').value = 'all';
             document.getElementById('filterWorker').value = 'all';
             renderAll();
         }
@@ -1151,6 +1181,7 @@
             renderAll();
         });
 
+        document.getElementById('filterQuality').addEventListener('change', renderAll);
         document.getElementById('filterWorker').addEventListener('change', renderAll);
 
         // ─── EXPORT CSV ──────────────────────────────
@@ -1214,7 +1245,7 @@
         populateFilterWorker();
         renderAll();
 
-        console.log('🐟 Tracker v3 loaded – tap worker chips!');
+        console.log('🐟 Tracker v3.1 – full/half separated, quality filter added.');
     </script>
 </body>
 </html>
