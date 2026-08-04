@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Salmon Tracker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #f4f2ed;
+            color: #1e293b;
+            padding: 12px 10px 80px;
+        }
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .app-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .app-header h1 span {
+            background: #e67e22;
+            color: #fff;
+            font-size: 12px;
+            padding: 2px 12px;
+            border-radius: 40px;
+        }
+        .header-actions button {
+            padding: 6px 14px;
+            border-radius: 40px;
+            border: 1px solid #d0d5dd;
+            background: #fff;
+            font-size: 13px;
+            margin-left: 4px;
+        }
+        .btn-danger {
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+        .quality-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 12px 0 20px;
+        }
+        .quality-grid .q-btn {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: 0.2s;
+        }
+        .quality-grid .q-btn:active {
+            transform: scale(0.96);
+        }
+        .quality-grid .q-btn .q-count {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e67e22;
+            line-height: 1.2;
+        }
+        .quality-grid .q-btn .q-sub {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        .quality-grid .q-btn .q-badge {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-size: 11px;
+            background: #fdf2e9;
+            color: #d35400;
+            padding: 0 8px;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+        .quality-grid .q-btn.quality-B {
+            border-left: 4px solid #3b82f6;
+        }
+        .quality-grid .q-btn.quality-Bplus {
+            border-left: 4px solid #8b5cf6;
+        }
+        .quality-grid .q-btn.quality-Cplus {
+            border-left: 4px solid #22c55e;
+        }
+        .quality-grid .q-btn.quality-BS {
+            border-left: 4px solid #f59e0b;
+        }
+        .quality-grid .q-btn.quality-MB {
+            border-left: 4px solid #ef4444;
+        }
+        .quality-grid .q-btn:nth-child(4) {
+            grid-column: 1/2;
+        }
+        .quality-grid .q-btn:nth-child(5) {
+            grid-column: 2/3;
+        }
+        .logs-section {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            margin-top: 8px;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .filter-bar select,
+        .filter-bar input {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid #d0d5dd;
+            font-size: 13px;
+            background: #fff;
+            max-width: 140px;
+        }
+        .filter-bar input[type="date"] {
+            max-width: 130px;
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            border: 1px solid #d0d5dd;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+        }
+        .btn-primary {
+            background: #e67e22;
+            color: #fff;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: none;
+            font-size: 14px;
+        }
+        .summary-mini {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 8px 4px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 12px;
+        }
+        .summary-mini .item {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .summary-mini .item .num {
+            color: #e67e22;
+            font-weight: 700;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 520px;
+        }
+        th {
+            background: #f8fafc;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .badge-quality {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        .badge-quality.B {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .badge-quality.Bplus {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+        .badge-quality.Cplus {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        .badge-quality.BS {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        .badge-quality.MB {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .badge-box {
+            font-size: 11px;
+            padding: 1px 10px;
+            border-radius: 40px;
+            background: #f1f5f9;
+        }
+        .badge-box.half {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .badge-box.full {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .row-actions button {
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-size: 15px;
+            background: transparent;
+            border: none;
+        }
+        .row-actions .delete-btn {
+            color: #b91c1c;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 30px 16px;
+            color: #94a3b8;
+        }
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 12px;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-sheet {
+            background: #fff;
+            border-radius: 14px 14px 0 0;
+            padding: 24px 20px 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-sheet {
+            transform: translateY(0);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .modal-header .close-btn {
+            font-size: 28px;
+            color: #94a3b8;
+            padding: 0 6px;
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #d0d5dd;
+            background: #fafafa;
+            font-size: 15px;
+        }
+        .form-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .form-group input[type="number"]::-webkit-outer-spin-button,
+        .form-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .toggle-group {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 3px;
+            border: 1px solid #d0d5dd;
+        }
+        .toggle-group button {
+            flex: 1;
+            padding: 8px 0;
+            border-radius: 7px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #64748b;
+            background: transparent;
+            border: none;
+        }
+        .toggle-group button.active {
+            background: #fff;
+            color: #1e293b;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .form-actions .btn-primary {
+            flex: 1;
+            justify-content: center;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+        }
+        .form-actions .btn-secondary {
+            padding: 12px 20px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #0f172a;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 14px;
+            opacity: 0;
+            transition: 0.3s ease;
+            pointer-events: none;
+            z-index: 999;
+            max-width: 90%;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast.success {
+            background: #16a34a;
+        }
+        .toast.error {
+            background: #b91c1c;
+        }
+        .toast.info {
+            background: #2563eb;
+        }
+        @media (max-width: 600px) {
+            .quality-grid {
+                gap: 8px;
+            }
+            .quality-grid .q-btn {
+                padding: 12px 4px;
+            }
+            .quality-grid .q-btn .q-count {
+                font-size: 28px;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-bar select,
+            .filter-bar input {
+                max-width: 100%;
+            }
+            .modal-sheet {
+                padding: 20px 16px 24px;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .form-actions .btn-primary {
+                width: 100%;
+            }
+        }
+        @media (min-width: 601px) {
+            .quality-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .quality-grid .q-btn:nth-child(4) {
+                grid-column: auto;
+            }
+            .quality-grid .q-btn:nth-child(5) {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+        <header class="app-header">
+            <h1>🐟 Salmon <span>v3</span></h1>
+            <div class="header-actions">
+                <button onclick="exportCSV()">📤 CSV</button>
+                <button onclick="clearAllData()" class="btn-danger">🗑️ Clear</button>
+            </div>
+        </header>
+
+        <div class="quality-grid" id="qualityGrid"></div>
+
+        <div class="logs-section">
+            <div class="filter-bar">
+                <select id="filterDateRange">
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="custom">Custom</option>
+                </select>
+                <input type="date" id="filterDateFrom" style="display:none;" />
+                <input type="date" id="filterDateTo" style="display:none;" />
+                <button class="btn-secondary" onclick="applyFilters()">Apply</button>
+                <select id="filterWorker"><option value="all">All Workers</option></select>
+                <button class="btn-secondary" onclick="resetFilters()">Reset</button>
+            </div>
+            <div class="summary-mini" id="summaryMini"></div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Date</th><th>Quality</th><th>Boxes</th><th>Type</th><th>Worker</th><th>Total</th><th style="text-align:center;">Actions</th></tr></thead>
+                    <tbody id="entriesBody"></tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <span id="entryCount">0 entries</span>
+                <span id="totalFullBoxes">Total: 0.0 full boxes</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="entryModal">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Entry</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <form id="modalForm" onsubmit="handleModalSubmit(event)">
+                <div class="form-group">
+                    <label>Quality</label>
+                    <input type="text" id="modalQuality" readonly style="background:#f1f5f9;font-weight:600;" />
+                </div>
+                <div class="form-group">
+                    <label for="modalBoxCount">📦 Box Count</label>
+                    <input type="number" id="modalBoxCount" min="0.5" step="0.5" value="1"
+                           inputmode="decimal" pattern="[0-9.]*" required />
+                </div>
+                <div class="form-group">
+                    <label>📐 Box Type</label>
+                    <div class="toggle-group" id="modalBoxTypeToggle">
+                        <button type="button" class="active" data-value="full">Full</button>
+                        <button type="button" data-value="half">Half</button>
+                    </div>
+                    <input type="hidden" id="modalBoxType" value="full" />
+                </div>
+                <div class="form-group">
+                    <label for="modalWorker">👤 Worker (optional)</label>
+                    <select id="modalWorker"><option value="">— Select worker —</option></select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">➕ Add Entry</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Storage with fallback
+        let storage = (function() {
+            try {
+                if (window.localStorage) {
+                    return {
+                        get: (key) => JSON.parse(localStorage.getItem(key)),
+                        set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
+                        remove: (key) => localStorage.removeItem(key)
+                    };
+                }
+            } catch (e) {}
+            try {
+                if (window.sessionStorage) {
+                    return {
+                        get: (key) => JSON.parse(sessionStorage.getItem(key)),
+                        set: (key, val) => sessionStorage.setItem(key, JSON.stringify(val)),
+                        remove: (key) => sessionStorage.removeItem(key)
+                    };
+                }
+            } catch (e) {}
+            const mem = {};
+            return {
+                get: (key) => mem[key] || null,
+                set: (key, val) => { mem[key] = val; },
+                remove: (key) => { delete mem[key]; }
+            };
+        })();
+
+        const STORAGE_ENTRIES = 'salmon_entries';
+        const STORAGE_WORKERS = 'salmon_workers';
+
+        function loadEntries() { return storage.get(STORAGE_ENTRIES) || []; }
+
+        function saveEntries(data) { storage.set(STORAGE_ENTRIES, data); }
+
+        function loadWorkers() {
+            let w = storage.get(STORAGE_WORKERS);
+            if (w && w.length) return w;
+            const defaults = [
+                { number: 1, name: 'Qi Che' },
+                { number: 2, name: 'Suman' },
+                { number: 3, name: 'Arjun' },
+                { number: 6, name: 'Aorigele' },
+                { number: 7, name: 'Jie Tang' },
+                { number: 9, name: 'Yongfu Tang' }
+            ];
+            saveWorkers(defaults);
+            return defaults;
+        }
+
+        function saveWorkers(data) { storage.set(STORAGE_WORKERS, data); }
+
+        let entries = loadEntries();
+        let workers = loadWorkers();
+        let editingEntryId = null;
+
+        function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+        function getWorkerByNumber(num) { return workers.find(w => w.number === num); }
+
+        function getCountsToday() {
+            const t = todayStr();
+            const counts = { 'B': 0, 'B+': 0, 'C+': 0, 'BS': 0, 'MB': 0 };
+            entries.forEach(e => {
+                if (e.date === t && counts[e.quality] !== undefined) counts[e.quality] += e.total;
+            });
+            return counts;
+        }
+
+        function populateWorkerSelects() {
+            const selects = [document.getElementById('modalWorker'), document.getElementById('filterWorker')];
+            const sorted = [...workers].sort((a, b) => a.number - b.number);
+            selects.forEach(sel => {
+                const cur = sel.value;
+                sel.innerHTML = '<option value="">— Select worker —</option>';
+                sorted.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w.number;
+                    opt.textContent = `${w.number} · ${w.name}`;
+                    sel.appendChild(opt);
+                });
+                if (cur && workers.some(w => String(w.number) === String(cur))) sel.value = cur;
+            });
+            const fw = document.getElementById('filterWorker');
+            const allOpt = document.createElement('option');
+            allOpt.value = 'all';
+            allOpt.textContent = 'All Workers';
+            fw.prepend(allOpt);
+            if (fw.value === 'all' || !fw.value) fw.value = 'all';
+        }
+
+        let toastTimeout;
+
+        function showToast(msg, type = 'info') {
+            const el = document.getElementById('toast');
+            if (!el) { alert(msg); return; }
+            el.textContent = msg;
+            el.className = 'toast ' + type;
+            void el.offsetWidth;
+            el.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => el.classList.remove('show'), 2500);
+        }
+
+        function openModal(quality) {
+            document.getElementById('modalQuality').value = quality;
+            document.getElementById('modalTitle').textContent = `Add ${quality} Entry`;
+            document.getElementById('modalBoxCount').value = 1;
+            document.getElementById('modalBoxType').value = 'full';
+            document.querySelectorAll('#modalBoxTypeToggle button').forEach(b => {
+                b.classList.toggle('active', b.dataset.value === 'full');
+            });
+            document.getElementById('modalWorker').value = '';
+            document.getElementById('entryModal').classList.add('active');
+            document.getElementById('modalBoxCount').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('entryModal').classList.remove('active');
+            editingEntryId = null;
+        }
+
+        document.querySelectorAll('#modalBoxTypeToggle button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#modalBoxTypeToggle button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('modalBoxType').value = this.dataset.value;
+            });
+        });
+
+        function handleModalSubmit(e) {
+            e.preventDefault();
+            const quality = document.getElementById('modalQuality').value.trim();
+            const boxCount = parseFloat(document.getElementById('modalBoxCount').value);
+            const boxType = document.getElementById('modalBoxType').value;
+            const workerNum = parseInt(document.getElementById('modalWorker').value) || null;
+            const date = todayStr();
+
+            if (!quality) { showToast('Quality required.', 'error'); return; }
+            if (isNaN(boxCount) || boxCount <= 0) { showToast('Enter valid box count.', 'error'); return; }
+
+            const total = boxCount * (boxType === 'half' ? 0.5 : 1);
+            const entry = {
+                id: editingEntryId || Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7),
+                date,
+                quality,
+                boxCount,
+                boxType,
+                workerNum,
+                total,
+                updatedAt: new Date().toISOString()
+            };
+
+            if (editingEntryId) {
+                const idx = entries.findIndex(e => e.id === editingEntryId);
+                if (idx !== -1) entries[idx] = entry;
+                else entries.push(entry);
+                editingEntryId = null;
+                showToast('Entry updated!', 'success');
+            } else {
+                entries.push(entry);
+                showToast('Entry added!', 'success');
+            }
+
+            saveEntries(entries);
+            closeModal();
+            renderAll();
+        }
+
+        function renderQualityButtons() {
+            const counts = getCountsToday();
+            const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
+            let html = '';
+            qualities.forEach(q => {
+                const count = counts[q] || 0;
+                const cls = 'quality-' + q.replace('+', 'plus');
+                html += `
+                    <div class="q-btn ${cls}" onclick="openModal('${q}')">
+                        <span class="q-badge">${q}</span>
+                        <span class="q-count">${count.toFixed(1)}</span>
+                        <span class="q-sub">boxes today</span>
+                    </div>
+                `;
+            });
+            document.getElementById('qualityGrid').innerHTML = html;
+        }
+
+        function getFilteredEntries() {
+            let filtered = [...entries];
+            const range = document.getElementById('filterDateRange').value;
+            if (range === 'today') {
+                const t = todayStr();
+                filtered = filtered.filter(e => e.date === t);
+            } else if (range === 'week') {
+                const now = new Date();
+                const day = now.getDay() || 7;
+                const diff = day - 1;
+                const monday = new Date(now);
+                monday.setDate(now.getDate() - diff);
+                const from = monday.toISOString().slice(0, 10);
+                const to = todayStr();
+                filtered = filtered.filter(e => e.date >= from && e.date <= to);
+            } else if (range === 'custom') {
+                const from = document.getElementById('filterDateFrom').value;
+                const to = document.getElementById('filterDateTo').value;
+                if (from) filtered = filtered.filter(e => e.date >= from);
+                if (to) filtered = filtered.filter(e => e.date <= to);
+            }
+            const wv = document.getElementById('filterWorker').value;
+            if (wv !== 'all' && wv) {
+                const num = parseInt(wv);
+                filtered = filtered.filter(e => e.workerNum === num);
+            }
+            return filtered;
+        }
+
+        function renderSummaryMini(filtered) {
+            const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
+            const totals = {};
+            qualities.forEach(q => totals[q] = 0);
+            let grand = 0;
+            filtered.forEach(e => {
+                if (totals[e.quality] !== undefined) totals[e.quality] += e.total;
+                grand += e.total;
+            });
+            let html = `<span class="item">📊 Total: <span class="num">${grand.toFixed(1)}</span></span>`;
+            qualities.forEach(q => {
+                const val = totals[q] || 0;
+                if (val > 0) html += `<span class="item">${q}: <span class="num">${val.toFixed(1)}</span></span>`;
+            });
+            document.getElementById('summaryMini').innerHTML = html;
+        }
+
+        function renderTable(filtered) {
+            const tbody = document.getElementById('entriesBody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">📭 No entries.</div></td></tr>`;
+                document.getElementById('entryCount').textContent = '0 entries';
+                document.getElementById('totalFullBoxes').textContent = 'Total: 0.0 full boxes';
+                return;
+            }
+            const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+            let rows = '';
+            sorted.forEach(e => {
+                const boxLabel = e.boxType === 'half' ? 'Half' : 'Full';
+                const boxCls = e.boxType === 'half' ? 'half' : 'full';
+                const qCls = e.quality.replace('+', 'plus');
+                const workerDisplay = e.workerNum ? `#${e.workerNum} ${getWorkerByNumber(e.workerNum)?.name || ''}` : '—';
+                rows += `
+                    <tr>
+                        <td><strong>${e.date}</strong></td>
+                        <td><span class="badge-quality ${qCls}">${e.quality}</span></td>
+                        <td>${e.boxCount}</td>
+                        <td><span class="badge-box ${boxCls}">${boxLabel}</span></td>
+                        <td>${workerDisplay}</td>
+                        <td>${e.total.toFixed(1)}</td>
+                        <td style="text-align:center;">
+                            <button onclick="editEntry('${e.id}')">✏️</button>
+                            <button onclick="deleteEntry('${e.id}')" class="delete-btn">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = rows;
+            const totalBoxes = filtered.reduce((s, e) => s + e.total, 0);
+            document.getElementById('entryCount').textContent = `${filtered.length} entries`;
+            document.getElementById('totalFullBoxes').textContent = `Total: ${totalBoxes.toFixed(1)} full boxes`;
+        }
+
+        function renderAll() {
+            renderQualityButtons();
+            const filtered = getFilteredEntries();
+            renderSummaryMini(filtered);
+            renderTable(filtered);
+            populateWorkerSelects();
+        }
+
+        function deleteEntry(id) {
+            if (!confirm('Delete this entry?')) return;
+            entries = entries.filter(e => e.id !== id);
+            saveEntries(entries);
+            renderAll();
+            showToast('Entry deleted.', 'info');
+        }
+
+        function editEntry(id) {
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+            editingEntryId = id;
+            document.getElementById('modalQuality').value = entry.quality;
+            document.getElementById('modalTitle').textContent = `Edit ${entry.quality} Entry`;
+            document.getElementById('modalBoxCount').value = entry.boxCount;
+            const type = entry.boxType || 'full';
+            document.getElementById('modalBoxType').value = type;
+            document.querySelectorAll('#modalBoxTypeToggle button').forEach(b => {
+                b.classList.toggle('active', b.dataset.value === type);
+            });
+            document.getElementById('modalWorker').value = entry.workerNum || '';
+            document.getElementById('entryModal').classList.add('active');
+            document.getElementById('modalBoxCount').focus();
+        }
+
+        function applyFilters() { renderAll(); }
+
+        function resetFilters() {
+            document.getElementById('filterDateRange').value = 'today';
+            document.getElementById('filterDateFrom').style.display = 'none';
+            document.getElementById('filterDateTo').style.display = 'none';
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            document.getElementById('filterWorker').value = 'all';
+            renderAll();
+        }
+
+        document.getElementById('filterDateRange').addEventListener('change', function() {
+            if (this.value === 'custom') {
+                document.getElementById('filterDateFrom').style.display = 'inline-block';
+                document.getElementById('filterDateTo').style.display = 'inline-block';
+                document.getElementById('filterDateFrom').value = todayStr();
+                document.getElementById('filterDateTo').value = todayStr();
+            } else {
+                document.getElementById('filterDateFrom').style.display = 'none';
+                document.getElementById('filterDateTo').style.display = 'none';
+                document.getElementById('filterDateFrom').value = '';
+                document.getElementById('filterDateTo').value = '';
+            }
+            renderAll();
+        });
+
+        document.getElementById('filterWorker').addEventListener('change', renderAll);
+
+        function exportCSV() {
+            if (entries.length === 0) { showToast('No data to export.', 'error'); return; }
+            const headers = ['Date', 'Quality', 'Box Count', 'Box Type', 'Worker Number', 'Worker Name', 'Total'];
+            const rows = entries.map(e => {
+                const w = getWorkerByNumber(e.workerNum);
+                return [
+                    e.date, e.quality, e.boxCount,
+                    e.boxType === 'half' ? 'Half' : 'Full',
+                    e.workerNum || '',
+                    w ? w.name : '',
+                    e.total.toFixed(1)
+                ];
+            });
+            let csv = headers.join(',') + '\n';
+            rows.forEach(r => {
+                csv += r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',') + '\n';
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `salmon_${todayStr()}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            showToast('CSV exported!', 'success');
+        }
+
+        function clearAllData() {
+            if (!confirm('Delete ALL production data?')) return;
+            if (!confirm('Are you sure?')) return;
+            entries = [];
+            saveEntries(entries);
+            renderAll();
+            showToast('All data cleared.', 'info');
+        }
+
+        document.getElementById('entryModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Init
+        if (!workers.length) {
+            workers = loadWorkers();
+            saveWorkers(workers);
+        }
+        populateWorkerSelects();
+        renderAll();
+
+        console.log('🐟 Tracker loaded');
+    </script>
+</body>
+</html>
