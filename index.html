@@ -46,6 +46,8 @@
             color: #b91c1c;
             border-color: #fecaca;
         }
+
+        /* Quality Buttons */
         .quality-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -113,6 +115,8 @@
         .quality-grid .q-btn:nth-child(5) {
             grid-column: 2/3;
         }
+
+        /* Logs */
         .logs-section {
             background: #fff;
             border-radius: 14px;
@@ -262,6 +266,8 @@
             color: #64748b;
             margin-top: 12px;
         }
+
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -355,6 +361,50 @@
             color: #1e293b;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
+
+        /* Worker chips */
+        .worker-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 4px 0;
+        }
+        .worker-chip {
+            padding: 6px 14px;
+            border-radius: 40px;
+            border: 1px solid #d0d5dd;
+            background: #f8fafc;
+            font-size: 13px;
+            font-weight: 500;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .worker-chip:active {
+            transform: scale(0.96);
+        }
+        .worker-chip.selected {
+            background: #e67e22;
+            color: #fff;
+            border-color: #e67e22;
+        }
+        .worker-chip .chip-num {
+            font-weight: 400;
+            color: #64748b;
+            margin-right: 4px;
+        }
+        .worker-chip.selected .chip-num {
+            color: #fdf2e9;
+        }
+        .worker-chip.none-chip {
+            background: #f1f5f9;
+            border-color: #d0d5dd;
+        }
+        .worker-chip.none-chip.selected {
+            background: #94a3b8;
+            border-color: #94a3b8;
+            color: #fff;
+        }
+
         .form-actions {
             display: flex;
             gap: 12px;
@@ -370,6 +420,8 @@
         .form-actions .btn-secondary {
             padding: 12px 20px;
         }
+
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 80px;
@@ -400,6 +452,105 @@
         .toast.info {
             background: #2563eb;
         }
+
+        /* Tabs */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 env(safe-area-inset-bottom);
+            z-index: 100;
+        }
+        .bottom-nav button {
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            color: #94a3b8;
+            padding: 6px 16px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+        .bottom-nav button.active {
+            color: #e67e22;
+            background: #fdf2e9;
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Workers tab */
+        .workers-section {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            margin-top: 8px;
+        }
+        .workers-section h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        .worker-form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .worker-form-row input {
+            flex: 1;
+            min-width: 100px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d0d5dd;
+            font-size: 14px;
+        }
+        .worker-form-row .btn-primary {
+            padding: 8px 16px;
+        }
+        .worker-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .worker-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .worker-item .info {
+            font-weight: 500;
+        }
+        .worker-item .info .num {
+            color: #e67e22;
+            margin-right: 6px;
+        }
+        .worker-item .actions button {
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+        }
+
         @media (max-width: 600px) {
             .quality-grid {
                 gap: 8px;
@@ -427,6 +578,13 @@
             .form-actions .btn-primary {
                 width: 100%;
             }
+            .worker-chips {
+                gap: 6px;
+            }
+            .worker-chip {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
         }
         @media (min-width: 601px) {
             .quality-grid {
@@ -442,7 +600,6 @@
     </style>
 </head>
 <body>
-
     <div class="app">
         <header class="app-header">
             <h1>🐟 Salmon <span>v3</span></h1>
@@ -452,33 +609,56 @@
             </div>
         </header>
 
-        <div class="quality-grid" id="qualityGrid"></div>
-
-        <div class="logs-section">
-            <div class="filter-bar">
-                <select id="filterDateRange">
-                    <option value="today">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="custom">Custom</option>
-                </select>
-                <input type="date" id="filterDateFrom" style="display:none;" />
-                <input type="date" id="filterDateTo" style="display:none;" />
-                <button class="btn-secondary" onclick="applyFilters()">Apply</button>
-                <select id="filterWorker"><option value="all">All Workers</option></select>
-                <button class="btn-secondary" onclick="resetFilters()">Reset</button>
-            </div>
-            <div class="summary-mini" id="summaryMini"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Date</th><th>Quality</th><th>Boxes</th><th>Type</th><th>Worker</th><th>Total</th><th style="text-align:center;">Actions</th></tr></thead>
-                    <tbody id="entriesBody"></tbody>
-                </table>
-            </div>
-            <div class="table-footer">
-                <span id="entryCount">0 entries</span>
-                <span id="totalFullBoxes">Total: 0.0 full boxes</span>
+        <!-- Production Tab -->
+        <div id="tabProduction" class="tab-content active">
+            <div class="quality-grid" id="qualityGrid"></div>
+            <div class="logs-section">
+                <div class="filter-bar">
+                    <select id="filterDateRange">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <input type="date" id="filterDateFrom" style="display:none;" />
+                    <input type="date" id="filterDateTo" style="display:none;" />
+                    <button class="btn-secondary" onclick="applyFilters()">Apply</button>
+                    <select id="filterWorker"><option value="all">All Workers</option></select>
+                    <button class="btn-secondary" onclick="resetFilters()">Reset</button>
+                </div>
+                <div class="summary-mini" id="summaryMini"></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Date</th><th>Quality</th><th>Boxes</th><th>Type</th><th>Worker</th><th>Total</th><th style="text-align:center;">Actions</th></tr></thead>
+                        <tbody id="entriesBody"></tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <span id="entryCount">0 entries</span>
+                    <span id="totalFullBoxes">Total: 0.0 full boxes</span>
+                </div>
             </div>
         </div>
+
+        <!-- Workers Tab -->
+        <div id="tabWorkers" class="tab-content">
+            <div class="workers-section">
+                <h2>👥 Manage Workers</h2>
+                <div class="worker-form-row" id="workerFormRow">
+                    <input type="number" id="workerNumber" placeholder="Number (ID)" min="1" />
+                    <input type="text" id="workerName" placeholder="Name" />
+                    <button class="btn-primary" id="workerSubmitBtn" onclick="handleWorkerSubmit()">➕ Add</button>
+                    <button class="btn-secondary" onclick="cancelWorkerEdit()" id="workerCancelBtn" style="display:none;">Cancel</button>
+                </div>
+                <div class="worker-list" id="workerList"></div>
+                <div style="margin-top:8px;font-size:12px;color:#94a3b8;"><span id="workerCount">0 workers</span></div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="active" data-tab="tabProduction">📊 Production</button>
+            <button data-tab="tabWorkers">👥 Workers</button>
+        </nav>
     </div>
 
     <!-- Modal -->
@@ -507,8 +687,9 @@
                     <input type="hidden" id="modalBoxType" value="full" />
                 </div>
                 <div class="form-group">
-                    <label for="modalWorker">👤 Worker (optional)</label>
-                    <select id="modalWorker"><option value="">— Select worker —</option></select>
+                    <label>👤 Worker (tap to select)</label>
+                    <div class="worker-chips" id="workerChips"></div>
+                    <input type="hidden" id="modalWorker" value="" />
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-primary">➕ Add Entry</button>
@@ -521,7 +702,7 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        // Storage with fallback
+        // ─── DATA LAYER ──────────────────────────────
         let storage = (function() {
             try {
                 if (window.localStorage) {
@@ -576,7 +757,9 @@
         let entries = loadEntries();
         let workers = loadWorkers();
         let editingEntryId = null;
+        let selectedWorkerNum = null;
 
+        // ─── HELPERS ──────────────────────────────────
         function todayStr() { return new Date().toISOString().slice(0, 10); }
 
         function getWorkerByNumber(num) { return workers.find(w => w.number === num); }
@@ -590,28 +773,7 @@
             return counts;
         }
 
-        function populateWorkerSelects() {
-            const selects = [document.getElementById('modalWorker'), document.getElementById('filterWorker')];
-            const sorted = [...workers].sort((a, b) => a.number - b.number);
-            selects.forEach(sel => {
-                const cur = sel.value;
-                sel.innerHTML = '<option value="">— Select worker —</option>';
-                sorted.forEach(w => {
-                    const opt = document.createElement('option');
-                    opt.value = w.number;
-                    opt.textContent = `${w.number} · ${w.name}`;
-                    sel.appendChild(opt);
-                });
-                if (cur && workers.some(w => String(w.number) === String(cur))) sel.value = cur;
-            });
-            const fw = document.getElementById('filterWorker');
-            const allOpt = document.createElement('option');
-            allOpt.value = 'all';
-            allOpt.textContent = 'All Workers';
-            fw.prepend(allOpt);
-            if (fw.value === 'all' || !fw.value) fw.value = 'all';
-        }
-
+        // ─── TOAST ────────────────────────────────────
         let toastTimeout;
 
         function showToast(msg, type = 'info') {
@@ -625,7 +787,29 @@
             toastTimeout = setTimeout(() => el.classList.remove('show'), 2500);
         }
 
+        // ─── WORKER CHIPS ─────────────────────────────
+        function renderWorkerChips() {
+            const container = document.getElementById('workerChips');
+            const sorted = [...workers].sort((a, b) => a.number - b.number);
+            let html = `<div class="worker-chip none-chip ${!selectedWorkerNum ? 'selected' : ''}" onclick="selectWorker(null)">None</div>`;
+            sorted.forEach(w => {
+                const sel = (selectedWorkerNum === w.number) ? 'selected' : '';
+                html += `<div class="worker-chip ${sel}" onclick="selectWorker(${w.number})">
+                            <span class="chip-num">#${w.number}</span> ${w.name}
+                        </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function selectWorker(num) {
+            selectedWorkerNum = (selectedWorkerNum === num) ? null : num;
+            document.getElementById('modalWorker').value = selectedWorkerNum || '';
+            renderWorkerChips();
+        }
+
+        // ─── MODAL ────────────────────────────────────
         function openModal(quality) {
+            selectedWorkerNum = null;
             document.getElementById('modalQuality').value = quality;
             document.getElementById('modalTitle').textContent = `Add ${quality} Entry`;
             document.getElementById('modalBoxCount').value = 1;
@@ -634,6 +818,7 @@
                 b.classList.toggle('active', b.dataset.value === 'full');
             });
             document.getElementById('modalWorker').value = '';
+            renderWorkerChips();
             document.getElementById('entryModal').classList.add('active');
             document.getElementById('modalBoxCount').focus();
         }
@@ -690,6 +875,7 @@
             renderAll();
         }
 
+        // ─── RENDER ──────────────────────────────────
         function renderQualityButtons() {
             const counts = getCountsToday();
             const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
@@ -790,14 +976,59 @@
             document.getElementById('totalFullBoxes').textContent = `Total: ${totalBoxes.toFixed(1)} full boxes`;
         }
 
+        function renderWorkers() {
+            const sorted = [...workers].sort((a, b) => a.number - b.number);
+            const list = document.getElementById('workerList');
+            if (sorted.length === 0) {
+                list.innerHTML = '<div class="empty-state">No workers added yet.</div>';
+                document.getElementById('workerCount').textContent = '0 workers';
+                return;
+            }
+            let html = '';
+            sorted.forEach(w => {
+                html += `
+                    <div class="worker-item">
+                        <div class="info"><span class="num">#${w.number}</span> ${w.name}</div>
+                        <div class="actions">
+                            <button onclick="editWorker(${w.number})">✏️</button>
+                            <button onclick="deleteWorker(${w.number})" style="color:#b91c1c;">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+            document.getElementById('workerCount').textContent = `${sorted.length} workers`;
+            // also update chips in modal if open
+            renderWorkerChips();
+        }
+
         function renderAll() {
             renderQualityButtons();
             const filtered = getFilteredEntries();
             renderSummaryMini(filtered);
             renderTable(filtered);
-            populateWorkerSelects();
+            renderWorkers();
+            // re-populate filter worker dropdown
+            populateFilterWorker();
         }
 
+        // ─── FILTER WORKER DROPDOWN ──────────────────
+        function populateFilterWorker() {
+            const sel = document.getElementById('filterWorker');
+            const current = sel.value;
+            const sorted = [...workers].sort((a, b) => a.number - b.number);
+            sel.innerHTML = '<option value="all">All Workers</option>';
+            sorted.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.number;
+                opt.textContent = `${w.number} · ${w.name}`;
+                sel.appendChild(opt);
+            });
+            if (current && workers.some(w => String(w.number) === String(current))) sel.value = current;
+            else sel.value = 'all';
+        }
+
+        // ─── CRUD ENTRIES ─────────────────────────────
         function deleteEntry(id) {
             if (!confirm('Delete this entry?')) return;
             entries = entries.filter(e => e.id !== id);
@@ -818,11 +1049,81 @@
             document.querySelectorAll('#modalBoxTypeToggle button').forEach(b => {
                 b.classList.toggle('active', b.dataset.value === type);
             });
-            document.getElementById('modalWorker').value = entry.workerNum || '';
+            selectedWorkerNum = entry.workerNum || null;
+            document.getElementById('modalWorker').value = selectedWorkerNum || '';
+            renderWorkerChips();
             document.getElementById('entryModal').classList.add('active');
             document.getElementById('modalBoxCount').focus();
         }
 
+        // ─── CRUD WORKERS ─────────────────────────────
+        let editingWorkerNumber = null;
+
+        function handleWorkerSubmit() {
+            const num = parseInt(document.getElementById('workerNumber').value);
+            const name = document.getElementById('workerName').value.trim();
+            if (isNaN(num) || num < 1) { showToast('Enter valid number.', 'error'); return; }
+            if (!name) { showToast('Enter name.', 'error'); return; }
+
+            const existing = workers.find(w => w.number === num);
+            if (existing && editingWorkerNumber === null) {
+                showToast(`#${num} already exists.`, 'error');
+                return;
+            }
+
+            if (editingWorkerNumber !== null) {
+                const idx = workers.findIndex(w => w.number === editingWorkerNumber);
+                if (idx !== -1) {
+                    if (editingWorkerNumber !== num) {
+                        const conflict = workers.find(w => w.number === num);
+                        if (conflict) { showToast(`#${num} already used.`, 'error'); return; }
+                        workers[idx].number = num;
+                    }
+                    workers[idx].name = name;
+                }
+                editingWorkerNumber = null;
+                document.getElementById('workerSubmitBtn').textContent = '➕ Add';
+                document.getElementById('workerCancelBtn').style.display = 'none';
+                showToast('Worker updated.', 'success');
+            } else {
+                workers.push({ number: num, name });
+                showToast('Worker added.', 'success');
+            }
+
+            saveWorkers(workers);
+            renderAll();
+            document.getElementById('workerNumber').value = '';
+            document.getElementById('workerName').value = '';
+        }
+
+        function editWorker(number) {
+            const w = workers.find(w => w.number === number);
+            if (!w) return;
+            editingWorkerNumber = number;
+            document.getElementById('workerNumber').value = w.number;
+            document.getElementById('workerName').value = w.name;
+            document.getElementById('workerSubmitBtn').textContent = '✏️ Update';
+            document.getElementById('workerCancelBtn').style.display = 'inline-block';
+        }
+
+        function cancelWorkerEdit() {
+            editingWorkerNumber = null;
+            document.getElementById('workerNumber').value = '';
+            document.getElementById('workerName').value = '';
+            document.getElementById('workerSubmitBtn').textContent = '➕ Add';
+            document.getElementById('workerCancelBtn').style.display = 'none';
+        }
+
+        function deleteWorker(number) {
+            if (!confirm(`Delete worker #${number}?`)) return;
+            workers = workers.filter(w => w.number !== number);
+            saveWorkers(workers);
+            renderAll();
+            showToast('Worker deleted.', 'info');
+            cancelWorkerEdit();
+        }
+
+        // ─── FILTERS ──────────────────────────────────
         function applyFilters() { renderAll(); }
 
         function resetFilters() {
@@ -852,8 +1153,9 @@
 
         document.getElementById('filterWorker').addEventListener('change', renderAll);
 
+        // ─── EXPORT CSV ──────────────────────────────
         function exportCSV() {
-            if (entries.length === 0) { showToast('No data to export.', 'error'); return; }
+            if (entries.length === 0) { showToast('No data.', 'error'); return; }
             const headers = ['Date', 'Quality', 'Box Count', 'Box Type', 'Worker Number', 'Worker Name', 'Total'];
             const rows = entries.map(e => {
                 const w = getWorkerByNumber(e.workerNum);
@@ -878,8 +1180,9 @@
             showToast('CSV exported!', 'success');
         }
 
+        // ─── CLEAR ALL ────────────────────────────────
         function clearAllData() {
-            if (!confirm('Delete ALL production data?')) return;
+            if (!confirm('Delete ALL data?')) return;
             if (!confirm('Are you sure?')) return;
             entries = [];
             saveEntries(entries);
@@ -887,19 +1190,31 @@
             showToast('All data cleared.', 'info');
         }
 
+        // ─── TABS ─────────────────────────────────────
+        document.querySelectorAll('.bottom-nav button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const tabId = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // ─── MODAL OVERLAY CLOSE ──────────────────────
         document.getElementById('entryModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
-        // Init
+        // ─── INIT ─────────────────────────────────────
         if (!workers.length) {
             workers = loadWorkers();
             saveWorkers(workers);
         }
-        populateWorkerSelects();
+        populateFilterWorker();
         renderAll();
 
-        console.log('🐟 Tracker loaded');
+        console.log('🐟 Tracker v3 loaded – tap worker chips!');
     </script>
 </body>
 </html>
