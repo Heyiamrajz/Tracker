@@ -46,8 +46,6 @@
             color: #b91c1c;
             border-color: #fecaca;
         }
-
-        /* Quality Buttons */
         .quality-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -115,8 +113,6 @@
         .quality-grid .q-btn:nth-child(5) {
             grid-column: 2/3;
         }
-
-        /* Logs */
         .logs-section {
             background: #fff;
             border-radius: 14px;
@@ -162,6 +158,29 @@
             border: none;
             font-size: 14px;
         }
+        .batch-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 8px 0 12px;
+            padding: 8px 4px;
+            background: #f8fafc;
+            border-radius: 10px;
+            align-items: center;
+        }
+        .batch-actions .info {
+            font-size: 13px;
+            color: #64748b;
+            margin-right: 8px;
+        }
+        .batch-actions .btn-primary {
+            font-size: 12px;
+            padding: 4px 14px;
+        }
+        .batch-actions .btn-secondary {
+            font-size: 12px;
+            padding: 4px 14px;
+        }
         .summary-mini {
             display: flex;
             flex-wrap: wrap;
@@ -191,7 +210,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
-            min-width: 520px;
+            min-width: 580px;
         }
         th {
             background: #f8fafc;
@@ -247,6 +266,20 @@
             background: #dbeafe;
             color: #1d4ed8;
         }
+        .badge-delivered {
+            font-size: 11px;
+            padding: 1px 10px;
+            border-radius: 40px;
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        .badge-not-delivered {
+            font-size: 11px;
+            padding: 1px 10px;
+            border-radius: 40px;
+            background: #fee2e2;
+            color: #b91c1c;
+        }
         .row-actions button {
             padding: 4px 6px;
             border-radius: 6px;
@@ -270,8 +303,6 @@
             color: #64748b;
             margin-top: 12px;
         }
-
-        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -343,6 +374,13 @@
             -webkit-appearance: none;
             margin: 0;
         }
+        .inline-group {
+            display: flex;
+            gap: 12px;
+        }
+        .inline-group .form-group {
+            flex: 1;
+        }
         .toggle-group {
             display: flex;
             background: #f1f5f9;
@@ -365,8 +403,6 @@
             color: #1e293b;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
-
-        /* Worker chips */
         .worker-chips {
             display: flex;
             flex-wrap: wrap;
@@ -408,7 +444,6 @@
             border-color: #94a3b8;
             color: #fff;
         }
-
         .form-actions {
             display: flex;
             gap: 12px;
@@ -424,8 +459,6 @@
         .form-actions .btn-secondary {
             padding: 12px 20px;
         }
-
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 80px;
@@ -456,8 +489,6 @@
         .toast.info {
             background: #2563eb;
         }
-
-        /* Tabs */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -484,15 +515,12 @@
             color: #e67e22;
             background: #fdf2e9;
         }
-
         .tab-content {
             display: none;
         }
         .tab-content.active {
             display: block;
         }
-
-        /* Workers tab */
         .workers-section {
             background: #fff;
             border-radius: 14px;
@@ -554,7 +582,75 @@
             background: transparent;
             font-size: 14px;
         }
-
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .dash-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .dash-card .label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .dash-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e67e22;
+            margin: 4px 0;
+        }
+        .dash-card .sub {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .dash-card .delivered {
+            color: #16a34a;
+        }
+        .dash-card .remaining {
+            color: #b91c1c;
+        }
+        .dash-quality {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        .dash-quality .q-item {
+            background: #f8fafc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .dash-quality .q-item .q-num {
+            font-weight: 700;
+            color: #e67e22;
+        }
+        .dash-bcombined {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+        .dash-bcombined .value {
+            color: #b45309;
+        }
+        /* checkbox column */
+        .select-col {
+            width: 32px;
+            text-align: center;
+        }
+        .select-col input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #e67e22;
+        }
         @media (max-width: 600px) {
             .quality-grid {
                 gap: 8px;
@@ -589,6 +685,20 @@
                 font-size: 12px;
                 padding: 4px 10px;
             }
+            .inline-group {
+                flex-direction: column;
+                gap: 0;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .batch-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .batch-actions .info {
+                text-align: center;
+            }
         }
         @media (min-width: 601px) {
             .quality-grid {
@@ -600,13 +710,16 @@
             .quality-grid .q-btn:nth-child(5) {
                 grid-column: auto;
             }
+            .dashboard-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
     </style>
 </head>
 <body>
     <div class="app">
         <header class="app-header">
-            <h1>🐟 Salmon <span>v3</span></h1>
+            <h1>🐟 Salmon <span>v4</span></h1>
             <div class="header-actions">
                 <button onclick="exportCSV()">📤 CSV</button>
                 <button onclick="clearAllData()" class="btn-danger">🗑️ Clear</button>
@@ -626,7 +739,6 @@
                     <input type="date" id="filterDateFrom" style="display:none;" />
                     <input type="date" id="filterDateTo" style="display:none;" />
                     <button class="btn-secondary" onclick="applyFilters()">Apply</button>
-                    <!-- NEW: Quality filter -->
                     <select id="filterQuality">
                         <option value="all">All Qualities</option>
                         <option value="B">B</option>
@@ -636,18 +748,46 @@
                         <option value="MB">MB</option>
                     </select>
                     <select id="filterWorker"><option value="all">All Workers</option></select>
+                    <select id="filterDelivered">
+                        <option value="all">All</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="remaining">Remaining</option>
+                    </select>
                     <button class="btn-secondary" onclick="resetFilters()">Reset</button>
                 </div>
+
+                <!-- Batch actions -->
+                <div class="batch-actions" id="batchActions">
+                    <span class="info" id="selectionInfo">0 selected</span>
+                    <button class="btn-primary" onclick="batchDeliver(true)">✅ Mark Selected as Delivered</button>
+                    <button class="btn-secondary" onclick="batchDeliver(false)">⏳ Mark Selected as Remaining</button>
+                    <button class="btn-secondary" onclick="clearSelection()">Clear Selection</button>
+                </div>
+
                 <div class="summary-mini" id="summaryMini"></div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Date</th><th>Quality</th><th>Boxes</th><th>Type</th><th>Worker</th><th>Total</th><th style="text-align:center;">Actions</th></tr></thead>
+                        <thead><tr>
+                            <th class="select-col"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()" /></th>
+                            <th>Date</th><th>Quality</th><th>Full</th><th>Half</th><th>Worker</th><th>Delivered</th><th style="text-align:center;">Actions</th>
+                        </tr></thead>
                         <tbody id="entriesBody"></tbody>
                     </table>
                 </div>
                 <div class="table-footer">
                     <span id="entryCount">0 entries</span>
                     <span id="totalFullBoxes">Total: 0 full, 0 half</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="tabDashboard" class="tab-content">
+            <div style="margin-top:12px;">
+                <div class="dashboard-grid" id="dashboardGrid"></div>
+                <div style="background:#fff;border-radius:14px;padding:16px;border:1px solid #e2e8f0;margin-top:12px;">
+                    <h3 style="font-size:16px;margin-bottom:8px;">📊 Today's Breakdown</h3>
+                    <div id="dashboardBreakdown"></div>
                 </div>
             </div>
         </div>
@@ -670,6 +810,7 @@
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
             <button class="active" data-tab="tabProduction">📊 Production</button>
+            <button data-tab="tabDashboard">📈 Dashboard</button>
             <button data-tab="tabWorkers">👥 Workers</button>
         </nav>
     </div>
@@ -686,23 +827,24 @@
                     <label>Quality</label>
                     <input type="text" id="modalQuality" readonly style="background:#f1f5f9;font-weight:600;" />
                 </div>
-                <div class="form-group">
-                    <label for="modalBoxCount">📦 Box Count</label>
-                    <input type="number" id="modalBoxCount" min="0.5" step="0.5" value="1"
-                           inputmode="decimal" pattern="[0-9.]*" required />
-                </div>
-                <div class="form-group">
-                    <label>📐 Box Type</label>
-                    <div class="toggle-group" id="modalBoxTypeToggle">
-                        <button type="button" class="active" data-value="full">Full</button>
-                        <button type="button" data-value="half">Half</button>
+                <div class="inline-group">
+                    <div class="form-group">
+                        <label for="modalFullCount">📦 Full Boxes</label>
+                        <input type="number" id="modalFullCount" min="0" step="1" value="0" inputmode="numeric" />
                     </div>
-                    <input type="hidden" id="modalBoxType" value="full" />
+                    <div class="form-group">
+                        <label for="modalHalfCount">🧊 Half Boxes</label>
+                        <input type="number" id="modalHalfCount" min="0" step="1" value="0" inputmode="numeric" />
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>👤 Worker (tap to select)</label>
                     <div class="worker-chips" id="workerChips"></div>
                     <input type="hidden" id="modalWorker" value="" />
+                </div>
+                <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;">
+                    <label style="margin:0;">📦 Delivered</label>
+                    <input type="checkbox" id="modalDelivered" style="width:24px;height:24px;margin:0;" />
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-primary">➕ Add Entry</button>
@@ -743,10 +885,31 @@
             };
         })();
 
-        const STORAGE_ENTRIES = 'salmon_entries';
+        const STORAGE_ENTRIES = 'salmon_entries_v4';
         const STORAGE_WORKERS = 'salmon_workers';
 
-        function loadEntries() { return storage.get(STORAGE_ENTRIES) || []; }
+        function loadEntries() {
+            let data = storage.get(STORAGE_ENTRIES) || [];
+            data = data.map(e => {
+                if (e.boxCount !== undefined && e.boxType !== undefined) {
+                    if (e.boxType === 'full') {
+                        e.fullCount = e.boxCount;
+                        e.halfCount = 0;
+                    } else {
+                        e.fullCount = 0;
+                        e.halfCount = e.boxCount;
+                    }
+                    delete e.boxCount;
+                    delete e.boxType;
+                }
+                if (e.delivered === undefined) e.delivered = false;
+                if (e.fullCount === undefined) e.fullCount = 0;
+                if (e.halfCount === undefined) e.halfCount = 0;
+                return e;
+            });
+            return data;
+        }
+
         function saveEntries(data) { storage.set(STORAGE_ENTRIES, data); }
 
         function loadWorkers() {
@@ -763,6 +926,7 @@
             saveWorkers(defaults);
             return defaults;
         }
+
         function saveWorkers(data) { storage.set(STORAGE_WORKERS, data); }
 
         let entries = loadEntries();
@@ -771,25 +935,41 @@
         let selectedWorkerNum = null;
         let editingWorkerNumber = null;
 
+        // ─── SELECTION STATE ──────────────────────────
+        let selectedIds = new Set();
+
         // ─── HELPERS ──────────────────────────────────
         function todayStr() { return new Date().toISOString().slice(0, 10); }
 
         function getWorkerByNumber(num) { return workers.find(w => w.number === num); }
 
-        function getCountsToday() {
+        function getTodayEntries() {
             const t = todayStr();
-            const counts = { 'B': { full: 0, half: 0 }, 'B+': { full: 0, half: 0 }, 'C+': { full: 0, half: 0 }, 'BS': { full: 0, half: 0 }, 'MB': { full: 0, half: 0 } };
-            entries.forEach(e => {
-                if (e.date === t && counts[e.quality]) {
-                    if (e.boxType === 'full') counts[e.quality].full += e.boxCount;
-                    else counts[e.quality].half += e.boxCount;
+            return entries.filter(e => e.date === t);
+        }
+
+        function getCounts(entriesList) {
+            const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
+            const result = {};
+            qualities.forEach(q => {
+                result[q] = { full: 0, half: 0, deliveredFull: 0, deliveredHalf: 0 };
+            });
+            entriesList.forEach(e => {
+                if (result[e.quality]) {
+                    result[e.quality].full += e.fullCount || 0;
+                    result[e.quality].half += e.halfCount || 0;
+                    if (e.delivered) {
+                        result[e.quality].deliveredFull += e.fullCount || 0;
+                        result[e.quality].deliveredHalf += e.halfCount || 0;
+                    }
                 }
             });
-            return counts;
+            return result;
         }
 
         // ─── TOAST ────────────────────────────────────
         let toastTimeout;
+
         function showToast(msg, type = 'info') {
             const el = document.getElementById('toast');
             if (!el) { alert(msg); return; }
@@ -805,7 +985,8 @@
         function renderWorkerChips() {
             const container = document.getElementById('workerChips');
             const sorted = [...workers].sort((a, b) => a.number - b.number);
-            let html = `<div class="worker-chip none-chip ${!selectedWorkerNum ? 'selected' : ''}" onclick="selectWorker(null)">None</div>`;
+            let html =
+                `<div class="worker-chip none-chip ${!selectedWorkerNum ? 'selected' : ''}" onclick="selectWorker(null)">None</div>`;
             sorted.forEach(w => {
                 const sel = (selectedWorkerNum === w.number) ? 'selected' : '';
                 html += `<div class="worker-chip ${sel}" onclick="selectWorker(${w.number})">
@@ -826,15 +1007,13 @@
             selectedWorkerNum = null;
             document.getElementById('modalQuality').value = quality;
             document.getElementById('modalTitle').textContent = `Add ${quality} Entry`;
-            document.getElementById('modalBoxCount').value = 1;
-            document.getElementById('modalBoxType').value = 'full';
-            document.querySelectorAll('#modalBoxTypeToggle button').forEach(b => {
-                b.classList.toggle('active', b.dataset.value === 'full');
-            });
+            document.getElementById('modalFullCount').value = 0;
+            document.getElementById('modalHalfCount').value = 0;
+            document.getElementById('modalDelivered').checked = false;
             document.getElementById('modalWorker').value = '';
             renderWorkerChips();
             document.getElementById('entryModal').classList.add('active');
-            document.getElementById('modalBoxCount').focus();
+            document.getElementById('modalFullCount').focus();
         }
 
         function closeModal() {
@@ -842,34 +1021,26 @@
             editingEntryId = null;
         }
 
-        document.querySelectorAll('#modalBoxTypeToggle button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('#modalBoxTypeToggle button').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('modalBoxType').value = this.dataset.value;
-            });
-        });
-
         function handleModalSubmit(e) {
             e.preventDefault();
             const quality = document.getElementById('modalQuality').value.trim();
-            const boxCount = parseFloat(document.getElementById('modalBoxCount').value);
-            const boxType = document.getElementById('modalBoxType').value;
+            const fullCount = parseInt(document.getElementById('modalFullCount').value) || 0;
+            const halfCount = parseInt(document.getElementById('modalHalfCount').value) || 0;
             const workerNum = parseInt(document.getElementById('modalWorker').value) || null;
+            const delivered = document.getElementById('modalDelivered').checked;
             const date = todayStr();
 
             if (!quality) { showToast('Quality required.', 'error'); return; }
-            if (isNaN(boxCount) || boxCount <= 0) { showToast('Enter valid box count.', 'error'); return; }
+            if (fullCount === 0 && halfCount === 0) { showToast('Add at least one box.', 'error'); return; }
 
             const entry = {
                 id: editingEntryId || Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7),
                 date,
                 quality,
-                boxCount,
-                boxType,
+                fullCount,
+                halfCount,
                 workerNum,
-                // total is stored for compatibility but we now track full/half separately
-                total: boxCount * (boxType === 'half' ? 0.5 : 1),
+                delivered,
                 updatedAt: new Date().toISOString()
             };
 
@@ -889,19 +1060,75 @@
             renderAll();
         }
 
+        // ─── SELECTION HELPERS ────────────────────────
+        function toggleSelectAll() {
+            const checked = document.getElementById('selectAll').checked;
+            const filtered = getFilteredEntries();
+            if (checked) {
+                filtered.forEach(e => selectedIds.add(e.id));
+            } else {
+                filtered.forEach(e => selectedIds.delete(e.id));
+            }
+            renderTable(filtered);
+            updateSelectionInfo();
+        }
+
+        function toggleSelect(id) {
+            if (selectedIds.has(id)) selectedIds.delete(id);
+            else selectedIds.add(id);
+            const filtered = getFilteredEntries();
+            renderTable(filtered);
+            updateSelectionInfo();
+            // Update select all checkbox
+            const allChecked = filtered.every(e => selectedIds.has(e.id));
+            document.getElementById('selectAll').checked = allChecked && filtered.length > 0;
+        }
+
+        function clearSelection() {
+            selectedIds.clear();
+            document.getElementById('selectAll').checked = false;
+            const filtered = getFilteredEntries();
+            renderTable(filtered);
+            updateSelectionInfo();
+        }
+
+        function updateSelectionInfo() {
+            document.getElementById('selectionInfo').textContent = `${selectedIds.size} selected`;
+        }
+
+        function batchDeliver(deliver) {
+            if (selectedIds.size === 0) {
+                showToast('No entries selected.', 'error');
+                return;
+            }
+            const msg = deliver ? `Mark ${selectedIds.size} entries as delivered?` :
+                `Mark ${selectedIds.size} entries as remaining?`;
+            if (!confirm(msg)) return;
+
+            entries.forEach(e => {
+                if (selectedIds.has(e.id)) {
+                    e.delivered = deliver;
+                }
+            });
+            saveEntries(entries);
+            clearSelection();
+            renderAll();
+            showToast(`${selectedIds.size} entries updated.`, 'success');
+        }
+
         // ─── RENDER ──────────────────────────────────
         function renderQualityButtons() {
-            const counts = getCountsToday();
+            const todayEntries = getTodayEntries();
+            const counts = getCounts(todayEntries);
             const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
             let html = '';
             qualities.forEach(q => {
-                const total = counts[q].full + counts[q].half; // show total boxes (full + half) but they want separate? For button we keep total boxes for quick view.
-                const count = total;
+                const total = counts[q].full + counts[q].half;
                 const cls = 'quality-' + q.replace('+', 'plus');
                 html += `
                     <div class="q-btn ${cls}" onclick="openModal('${q}')">
                         <span class="q-badge">${q}</span>
-                        <span class="q-count">${count.toFixed(1)}</span>
+                        <span class="q-count">${total}</span>
                         <span class="q-sub">boxes today</span>
                     </div>
                 `;
@@ -930,38 +1157,49 @@
                 if (from) filtered = filtered.filter(e => e.date >= from);
                 if (to) filtered = filtered.filter(e => e.date <= to);
             }
-            // Quality filter
             const qf = document.getElementById('filterQuality').value;
             if (qf !== 'all') filtered = filtered.filter(e => e.quality === qf);
-            // Worker filter
             const wv = document.getElementById('filterWorker').value;
             if (wv !== 'all' && wv) {
                 const num = parseInt(wv);
                 filtered = filtered.filter(e => e.workerNum === num);
             }
+            const del = document.getElementById('filterDelivered').value;
+            if (del === 'delivered') filtered = filtered.filter(e => e.delivered === true);
+            else if (del === 'remaining') filtered = filtered.filter(e => e.delivered === false);
             return filtered;
         }
 
         function renderSummaryMini(filtered) {
+            const counts = getCounts(filtered);
             const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
-            const totals = {};
-            qualities.forEach(q => totals[q] = { full: 0, half: 0 });
-            let grandFull = 0, grandHalf = 0;
-            filtered.forEach(e => {
-                if (totals[e.quality]) {
-                    if (e.boxType === 'full') totals[e.quality].full += e.boxCount;
-                    else totals[e.quality].half += e.boxCount;
-                }
-                if (e.boxType === 'full') grandFull += e.boxCount;
-                else grandHalf += e.boxCount;
-            });
-
-            let html = `<span class="item">📦 Total: <span class="num">${grandFull}</span> full + <span class="num">${grandHalf}</span> half</span>`;
+            let totalFull = 0,
+                totalHalf = 0;
+            let totalDeliveredFull = 0,
+                totalDeliveredHalf = 0;
             qualities.forEach(q => {
-                const f = totals[q].full;
-                const h = totals[q].half;
+                totalFull += counts[q].full;
+                totalHalf += counts[q].half;
+                totalDeliveredFull += counts[q].deliveredFull;
+                totalDeliveredHalf += counts[q].deliveredHalf;
+            });
+            const remainingFull = totalFull - totalDeliveredFull;
+            const remainingHalf = totalHalf - totalDeliveredHalf;
+
+            let html = `<span class="item">📦 Total: <span class="num">${totalFull}</span> full + <span class="num">${totalHalf}</span> half</span>`;
+            html +=
+                `<span class="item">✅ Delivered: <span class="num">${totalDeliveredFull}</span> full + <span class="num">${totalDeliveredHalf}</span> half</span>`;
+            html +=
+                `<span class="item">📦 Remaining: <span class="num">${remainingFull}</span> full + <span class="num">${remainingHalf}</span> half</span>`;
+
+            qualities.forEach(q => {
+                const f = counts[q].full;
+                const h = counts[q].half;
+                const df = counts[q].deliveredFull;
+                const dh = counts[q].deliveredHalf;
                 if (f > 0 || h > 0) {
-                    html += `<span class="item">${q}: <span class="num">${f}</span> full + <span class="half">${h}</span> half</span>`;
+                    html +=
+                        `<span class="item">${q}: <span class="num">${f}</span> full + <span class="half">${h}</span> half (delivered: ${df} full + ${dh} half)</span>`;
                 }
             });
             document.getElementById('summaryMini').innerHTML = html;
@@ -970,7 +1208,7 @@
         function renderTable(filtered) {
             const tbody = document.getElementById('entriesBody');
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">📭 No entries.</div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">📭 No entries.</div></td></tr>`;
                 document.getElementById('entryCount').textContent = '0 entries';
                 document.getElementById('totalFullBoxes').textContent = 'Total: 0 full, 0 half';
                 return;
@@ -978,19 +1216,22 @@
             const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
             let rows = '';
             sorted.forEach(e => {
-                const boxLabel = e.boxType === 'half' ? 'Half' : 'Full';
-                const boxCls = e.boxType === 'half' ? 'half' : 'full';
                 const qCls = e.quality.replace('+', 'plus');
                 const workerDisplay = e.workerNum ? `#${e.workerNum} ${getWorkerByNumber(e.workerNum)?.name || ''}` : '—';
+                const deliveredLabel = e.delivered ? '✅ Delivered' : '⏳ Remaining';
+                const deliveredCls = e.delivered ? 'badge-delivered' : 'badge-not-delivered';
+                const checked = selectedIds.has(e.id) ? 'checked' : '';
                 rows += `
                     <tr>
+                        <td class="select-col"><input type="checkbox" ${checked} onchange="toggleSelect('${e.id}')" /></td>
                         <td><strong>${e.date}</strong></td>
                         <td><span class="badge-quality ${qCls}">${e.quality}</span></td>
-                        <td>${e.boxCount}</td>
-                        <td><span class="badge-box ${boxCls}">${boxLabel}</span></td>
+                        <td>${e.fullCount || 0}</td>
+                        <td>${e.halfCount || 0}</td>
                         <td>${workerDisplay}</td>
-                        <td>${e.total.toFixed(1)}</td>
+                        <td><span class="${deliveredCls}">${deliveredLabel}</span></td>
                         <td style="text-align:center;">
+                            <button onclick="toggleDelivered('${e.id}')" title="Toggle delivered">📦</button>
                             <button onclick="editEntry('${e.id}')">✏️</button>
                             <button onclick="deleteEntry('${e.id}')" class="delete-btn">🗑️</button>
                         </td>
@@ -998,14 +1239,19 @@
                 `;
             });
             tbody.innerHTML = rows;
-            // compute full/half for footer
-            let totalFull = 0, totalHalf = 0;
+            let totalFull = 0,
+                totalHalf = 0;
             filtered.forEach(e => {
-                if (e.boxType === 'full') totalFull += e.boxCount;
-                else totalHalf += e.boxCount;
+                totalFull += e.fullCount || 0;
+                totalHalf += e.halfCount || 0;
             });
             document.getElementById('entryCount').textContent = `${filtered.length} entries`;
             document.getElementById('totalFullBoxes').textContent = `Total: ${totalFull} full, ${totalHalf} half`;
+
+            // Update select all
+            const allChecked = filtered.every(e => selectedIds.has(e.id));
+            document.getElementById('selectAll').checked = allChecked && filtered.length > 0;
+            updateSelectionInfo();
         }
 
         function renderWorkers() {
@@ -1030,8 +1276,73 @@
             });
             list.innerHTML = html;
             document.getElementById('workerCount').textContent = `${sorted.length} workers`;
-            // also update chips in modal if open
             renderWorkerChips();
+        }
+
+        function renderDashboard() {
+            const todayEntries = getTodayEntries();
+            const counts = getCounts(todayEntries);
+            const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
+            let totalFull = 0,
+                totalHalf = 0;
+            let totalDeliveredFull = 0,
+                totalDeliveredHalf = 0;
+            qualities.forEach(q => {
+                totalFull += counts[q].full;
+                totalHalf += counts[q].half;
+                totalDeliveredFull += counts[q].deliveredFull;
+                totalDeliveredHalf += counts[q].deliveredHalf;
+            });
+            const remainingFull = totalFull - totalDeliveredFull;
+            const remainingHalf = totalHalf - totalDeliveredHalf;
+            const totalBoxes = totalFull + totalHalf;
+            const deliveredBoxes = totalDeliveredFull + totalDeliveredHalf;
+            const remainingBoxes = remainingFull + remainingHalf;
+
+            const bFull = counts['B'].full + counts['MB'].full;
+            const bHalf = counts['B'].half + counts['MB'].half;
+            const bDeliveredFull = counts['B'].deliveredFull + counts['MB'].deliveredFull;
+            const bDeliveredHalf = counts['B'].deliveredHalf + counts['MB'].deliveredHalf;
+            const bRemainingFull = bFull - bDeliveredFull;
+            const bRemainingHalf = bHalf - bDeliveredHalf;
+
+            let gridHtml = `
+                <div class="dash-card">
+                    <div class="label">Total Production</div>
+                    <div class="value">${totalBoxes}</div>
+                    <div class="sub">${totalFull} full + ${totalHalf} half</div>
+                </div>
+                <div class="dash-card">
+                    <div class="label">Delivered</div>
+                    <div class="value delivered">${deliveredBoxes}</div>
+                    <div class="sub">${totalDeliveredFull} full + ${totalDeliveredHalf} half</div>
+                </div>
+                <div class="dash-card">
+                    <div class="label">Remaining</div>
+                    <div class="value remaining">${remainingBoxes}</div>
+                    <div class="sub">${remainingFull} full + ${remainingHalf} half</div>
+                </div>
+                <div class="dash-card dash-bcombined" style="grid-column:1/-1;">
+                    <div class="label">Combined B (B + MB)</div>
+                    <div class="value">${bFull + bHalf}</div>
+                    <div class="sub">${bFull} full + ${bHalf} half (delivered: ${bDeliveredFull + bDeliveredHalf})</div>
+                </div>
+            `;
+            document.getElementById('dashboardGrid').innerHTML = gridHtml;
+
+            let breakHtml = `<div class="dash-quality">`;
+            qualities.forEach(q => {
+                const f = counts[q].full;
+                const h = counts[q].half;
+                const df = counts[q].deliveredFull;
+                const dh = counts[q].deliveredHalf;
+                const total = f + h;
+                if (total > 0) {
+                    breakHtml += `<span class="q-item">${q}: <span class="q-num">${total}</span> (${f} full + ${h} half) · delivered: ${df + dh}</span>`;
+                }
+            });
+            breakHtml += `</div>`;
+            document.getElementById('dashboardBreakdown').innerHTML = breakHtml;
         }
 
         function renderAll() {
@@ -1040,6 +1351,7 @@
             renderSummaryMini(filtered);
             renderTable(filtered);
             renderWorkers();
+            renderDashboard();
             populateFilterWorker();
         }
 
@@ -1063,9 +1375,19 @@
         function deleteEntry(id) {
             if (!confirm('Delete this entry?')) return;
             entries = entries.filter(e => e.id !== id);
+            selectedIds.delete(id);
             saveEntries(entries);
             renderAll();
             showToast('Entry deleted.', 'info');
+        }
+
+        function toggleDelivered(id) {
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+            entry.delivered = !entry.delivered;
+            saveEntries(entries);
+            renderAll();
+            showToast(entry.delivered ? 'Marked as delivered.' : 'Marked as remaining.', 'info');
         }
 
         function editEntry(id) {
@@ -1074,17 +1396,14 @@
             editingEntryId = id;
             document.getElementById('modalQuality').value = entry.quality;
             document.getElementById('modalTitle').textContent = `Edit ${entry.quality} Entry`;
-            document.getElementById('modalBoxCount').value = entry.boxCount;
-            const type = entry.boxType || 'full';
-            document.getElementById('modalBoxType').value = type;
-            document.querySelectorAll('#modalBoxTypeToggle button').forEach(b => {
-                b.classList.toggle('active', b.dataset.value === type);
-            });
+            document.getElementById('modalFullCount').value = entry.fullCount || 0;
+            document.getElementById('modalHalfCount').value = entry.halfCount || 0;
+            document.getElementById('modalDelivered').checked = entry.delivered || false;
             selectedWorkerNum = entry.workerNum || null;
             document.getElementById('modalWorker').value = selectedWorkerNum || '';
             renderWorkerChips();
             document.getElementById('entryModal').classList.add('active');
-            document.getElementById('modalBoxCount').focus();
+            document.getElementById('modalFullCount').focus();
         }
 
         // ─── CRUD WORKERS ─────────────────────────────
@@ -1153,7 +1472,11 @@
         }
 
         // ─── FILTERS ──────────────────────────────────
-        function applyFilters() { renderAll(); }
+        function applyFilters() {
+            // Clear selection when filtering
+            clearSelection();
+            renderAll();
+        }
 
         function resetFilters() {
             document.getElementById('filterDateRange').value = 'today';
@@ -1163,6 +1486,8 @@
             document.getElementById('filterDateTo').value = '';
             document.getElementById('filterQuality').value = 'all';
             document.getElementById('filterWorker').value = 'all';
+            document.getElementById('filterDelivered').value = 'all';
+            clearSelection();
             renderAll();
         }
 
@@ -1178,24 +1503,27 @@
                 document.getElementById('filterDateFrom').value = '';
                 document.getElementById('filterDateTo').value = '';
             }
+            clearSelection();
             renderAll();
         });
 
-        document.getElementById('filterQuality').addEventListener('change', renderAll);
-        document.getElementById('filterWorker').addEventListener('change', renderAll);
+        document.getElementById('filterQuality').addEventListener('change', function() { clearSelection();
+            renderAll(); });
+        document.getElementById('filterWorker').addEventListener('change', function() { clearSelection();
+            renderAll(); });
+        document.getElementById('filterDelivered').addEventListener('change', function() { clearSelection();
+            renderAll(); });
 
         // ─── EXPORT CSV ──────────────────────────────
         function exportCSV() {
             if (entries.length === 0) { showToast('No data.', 'error'); return; }
-            const headers = ['Date', 'Quality', 'Box Count', 'Box Type', 'Worker Number', 'Worker Name', 'Total'];
+            const headers = ['Date', 'Quality', 'Full Boxes', 'Half Boxes', 'Worker Number', 'Worker Name', 'Delivered'];
             const rows = entries.map(e => {
                 const w = getWorkerByNumber(e.workerNum);
                 return [
-                    e.date, e.quality, e.boxCount,
-                    e.boxType === 'half' ? 'Half' : 'Full',
-                    e.workerNum || '',
-                    w ? w.name : '',
-                    e.total.toFixed(1)
+                    e.date, e.quality, e.fullCount || 0, e.halfCount || 0,
+                    e.workerNum || '', w ? w.name : '',
+                    e.delivered ? 'Yes' : 'No'
                 ];
             });
             let csv = headers.join(',') + '\n';
@@ -1216,6 +1544,7 @@
             if (!confirm('Delete ALL data?')) return;
             if (!confirm('Are you sure?')) return;
             entries = [];
+            selectedIds.clear();
             saveEntries(entries);
             renderAll();
             showToast('All data cleared.', 'info');
@@ -1245,7 +1574,7 @@
         populateFilterWorker();
         renderAll();
 
-        console.log('🐟 Tracker v3.1 – full/half separated, quality filter added.');
+        console.log('🐟 Tracker v4 – batch selection added');
     </script>
 </body>
 </html>
