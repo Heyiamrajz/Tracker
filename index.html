@@ -1,1580 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>Salmon Tracker</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: #f4f2ed;
-            color: #1e293b;
-            padding: 12px 10px 80px;
-        }
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-        .app-header h1 {
-            font-size: 22px;
-            font-weight: 700;
-        }
-        .app-header h1 span {
-            background: #e67e22;
-            color: #fff;
-            font-size: 12px;
-            padding: 2px 12px;
-            border-radius: 40px;
-        }
-        .header-actions button {
-            padding: 6px 14px;
-            border-radius: 40px;
-            border: 1px solid #d0d5dd;
-            background: #fff;
-            font-size: 13px;
-            margin-left: 4px;
-        }
-        .btn-danger {
-            color: #b91c1c;
-            border-color: #fecaca;
-        }
-        .quality-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 12px 0 20px;
-        }
-        .quality-grid .q-btn {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 16px 8px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            aspect-ratio: 1/1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            transition: 0.2s;
-        }
-        .quality-grid .q-btn:active {
-            transform: scale(0.96);
-        }
-        .quality-grid .q-btn .q-count {
-            font-size: 32px;
-            font-weight: 700;
-            color: #e67e22;
-            line-height: 1.2;
-        }
-        .quality-grid .q-btn .q-sub {
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 4px;
-        }
-        .quality-grid .q-btn .q-badge {
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            font-size: 11px;
-            background: #fdf2e9;
-            color: #d35400;
-            padding: 0 8px;
-            border-radius: 40px;
-            font-weight: 600;
-        }
-        .quality-grid .q-btn.quality-B {
-            border-left: 4px solid #3b82f6;
-        }
-        .quality-grid .q-btn.quality-Bplus {
-            border-left: 4px solid #8b5cf6;
-        }
-        .quality-grid .q-btn.quality-Cplus {
-            border-left: 4px solid #22c55e;
-        }
-        .quality-grid .q-btn.quality-BS {
-            border-left: 4px solid #f59e0b;
-        }
-        .quality-grid .q-btn.quality-MB {
-            border-left: 4px solid #ef4444;
-        }
-        .quality-grid .q-btn:nth-child(4) {
-            grid-column: 1/2;
-        }
-        .quality-grid .q-btn:nth-child(5) {
-            grid-column: 2/3;
-        }
-        .logs-section {
-            background: #fff;
-            border-radius: 14px;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            margin-top: 8px;
-        }
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            background: #f8fafc;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
-        .filter-bar select,
-        .filter-bar input {
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid #d0d5dd;
-            font-size: 13px;
-            background: #fff;
-            max-width: 140px;
-        }
-        .filter-bar input[type="date"] {
-            max-width: 130px;
-        }
-        .btn-secondary {
-            background: #f1f5f9;
-            border: 1px solid #d0d5dd;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 12px;
-        }
-        .btn-primary {
-            background: #e67e22;
-            color: #fff;
-            font-weight: 600;
-            padding: 8px 20px;
-            border-radius: 40px;
-            border: none;
-            font-size: 14px;
-        }
-        .batch-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 8px 0 12px;
-            padding: 8px 4px;
-            background: #f8fafc;
-            border-radius: 10px;
-            align-items: center;
-        }
-        .batch-actions .info {
-            font-size: 13px;
-            color: #64748b;
-            margin-right: 8px;
-        }
-        .batch-actions .btn-primary {
-            font-size: 12px;
-            padding: 4px 14px;
-        }
-        .batch-actions .btn-secondary {
-            font-size: 12px;
-            padding: 4px 14px;
-        }
-        .summary-mini {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 18px;
-            padding: 8px 4px;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 12px;
-            font-size: 13px;
-        }
-        .summary-mini .item {
-            font-weight: 500;
-        }
-        .summary-mini .item .num {
-            color: #e67e22;
-            font-weight: 700;
-        }
-        .summary-mini .item .half {
-            color: #64748b;
-            font-weight: 400;
-        }
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            min-width: 580px;
-        }
-        th {
-            background: #f8fafc;
-            padding: 10px 12px;
-            text-align: left;
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #64748b;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .badge-quality {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 11px;
-        }
-        .badge-quality.B {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-        .badge-quality.Bplus {
-            background: #ede9fe;
-            color: #7c3aed;
-        }
-        .badge-quality.Cplus {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-        .badge-quality.BS {
-            background: #fef3c7;
-            color: #b45309;
-        }
-        .badge-quality.MB {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-        .badge-box {
-            font-size: 11px;
-            padding: 1px 10px;
-            border-radius: 40px;
-            background: #f1f5f9;
-        }
-        .badge-box.half {
-            background: #fef9c3;
-            color: #854d0e;
-        }
-        .badge-box.full {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-        .badge-delivered {
-            font-size: 11px;
-            padding: 1px 10px;
-            border-radius: 40px;
-            background: #dcfce7;
-            color: #16a34a;
-        }
-        .badge-not-delivered {
-            font-size: 11px;
-            padding: 1px 10px;
-            border-radius: 40px;
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-        .row-actions button {
-            padding: 4px 6px;
-            border-radius: 6px;
-            font-size: 15px;
-            background: transparent;
-            border: none;
-        }
-        .row-actions .delete-btn {
-            color: #b91c1c;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 30px 16px;
-            color: #94a3b8;
-        }
-        .table-footer {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 12px;
-        }
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            display: none;
-            align-items: flex-end;
-            justify-content: center;
-            z-index: 200;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal-sheet {
-            background: #fff;
-            border-radius: 14px 14px 0 0;
-            padding: 24px 20px 30px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        .modal-overlay.active .modal-sheet {
-            transform: translateY(0);
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        .modal-header h2 {
-            font-size: 18px;
-            font-weight: 700;
-        }
-        .modal-header .close-btn {
-            font-size: 28px;
-            color: #94a3b8;
-            padding: 0 6px;
-        }
-        .form-group {
-            margin-bottom: 14px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: 1px solid #d0d5dd;
-            background: #fafafa;
-            font-size: 15px;
-        }
-        .form-group input[type="number"] {
-            -moz-appearance: textfield;
-        }
-        .form-group input[type="number"]::-webkit-outer-spin-button,
-        .form-group input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .inline-group {
-            display: flex;
-            gap: 12px;
-        }
-        .inline-group .form-group {
-            flex: 1;
-        }
-        .toggle-group {
-            display: flex;
-            background: #f1f5f9;
-            border-radius: 10px;
-            padding: 3px;
-            border: 1px solid #d0d5dd;
-        }
-        .toggle-group button {
-            flex: 1;
-            padding: 8px 0;
-            border-radius: 7px;
-            font-weight: 500;
-            font-size: 14px;
-            color: #64748b;
-            background: transparent;
-            border: none;
-        }
-        .toggle-group button.active {
-            background: #fff;
-            color: #1e293b;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-        }
-        .worker-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 4px 0;
-        }
-        .worker-chip {
-            padding: 6px 14px;
-            border-radius: 40px;
-            border: 1px solid #d0d5dd;
-            background: #f8fafc;
-            font-size: 13px;
-            font-weight: 500;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .worker-chip:active {
-            transform: scale(0.96);
-        }
-        .worker-chip.selected {
-            background: #e67e22;
-            color: #fff;
-            border-color: #e67e22;
-        }
-        .worker-chip .chip-num {
-            font-weight: 400;
-            color: #64748b;
-            margin-right: 4px;
-        }
-        .worker-chip.selected .chip-num {
-            color: #fdf2e9;
-        }
-        .worker-chip.none-chip {
-            background: #f1f5f9;
-            border-color: #d0d5dd;
-        }
-        .worker-chip.none-chip.selected {
-            background: #94a3b8;
-            border-color: #94a3b8;
-            color: #fff;
-        }
-        .form-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 18px;
-        }
-        .form-actions .btn-primary {
-            flex: 1;
-            justify-content: center;
-            padding: 12px;
-            font-size: 16px;
-            border: none;
-        }
-        .form-actions .btn-secondary {
-            padding: 12px 20px;
-        }
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: #0f172a;
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 14px;
-            opacity: 0;
-            transition: 0.3s ease;
-            pointer-events: none;
-            z-index: 999;
-            max-width: 90%;
-        }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        .toast.success {
-            background: #16a34a;
-        }
-        .toast.error {
-            background: #b91c1c;
-        }
-        .toast.info {
-            background: #2563eb;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0 env(safe-area-inset-bottom);
-            z-index: 100;
-        }
-        .bottom-nav button {
-            background: none;
-            border: none;
-            font-size: 13px;
-            font-weight: 500;
-            color: #94a3b8;
-            padding: 6px 16px;
-            border-radius: 10px;
-            transition: 0.2s;
-        }
-        .bottom-nav button.active {
-            color: #e67e22;
-            background: #fdf2e9;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .workers-section {
-            background: #fff;
-            border-radius: 14px;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
-            margin-top: 8px;
-        }
-        .workers-section h2 {
-            font-size: 18px;
-            margin-bottom: 12px;
-        }
-        .worker-form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
-        .worker-form-row input {
-            flex: 1;
-            min-width: 100px;
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid #d0d5dd;
-            font-size: 14px;
-        }
-        .worker-form-row .btn-primary {
-            padding: 8px 16px;
-        }
-        .worker-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 8px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .worker-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-        .worker-item .info {
-            font-weight: 500;
-        }
-        .worker-item .info .num {
-            color: #e67e22;
-            margin-right: 6px;
-        }
-        .worker-item .actions button {
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: none;
-            background: transparent;
-            font-size: 14px;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 12px 0;
-        }
-        .dash-card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
-            text-align: center;
-        }
-        .dash-card .label {
-            font-size: 12px;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        .dash-card .value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #e67e22;
-            margin: 4px 0;
-        }
-        .dash-card .sub {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-        .dash-card .delivered {
-            color: #16a34a;
-        }
-        .dash-card .remaining {
-            color: #b91c1c;
-        }
-        .dash-quality {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-        .dash-quality .q-item {
-            background: #f8fafc;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .dash-quality .q-item .q-num {
-            font-weight: 700;
-            color: #e67e22;
-        }
-        .dash-bcombined {
-            background: #fef3c7;
-            border-color: #f59e0b;
-        }
-        .dash-bcombined .value {
-            color: #b45309;
-        }
-        /* checkbox column */
-        .select-col {
-            width: 32px;
-            text-align: center;
-        }
-        .select-col input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #e67e22;
-        }
-        @media (max-width: 600px) {
-            .quality-grid {
-                gap: 8px;
-            }
-            .quality-grid .q-btn {
-                padding: 12px 4px;
-            }
-            .quality-grid .q-btn .q-count {
-                font-size: 28px;
-            }
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filter-bar select,
-            .filter-bar input {
-                max-width: 100%;
-            }
-            .modal-sheet {
-                padding: 20px 16px 24px;
-            }
-            .form-actions {
-                flex-direction: column;
-            }
-            .form-actions .btn-primary {
-                width: 100%;
-            }
-            .worker-chips {
-                gap: 6px;
-            }
-            .worker-chip {
-                font-size: 12px;
-                padding: 4px 10px;
-            }
-            .inline-group {
-                flex-direction: column;
-                gap: 0;
-            }
-            .dashboard-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .batch-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .batch-actions .info {
-                text-align: center;
-            }
-        }
-        @media (min-width: 601px) {
-            .quality-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-            .quality-grid .q-btn:nth-child(4) {
-                grid-column: auto;
-            }
-            .quality-grid .q-btn:nth-child(5) {
-                grid-column: auto;
-            }
-            .dashboard-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Salmon Count" />
+  <title>Salmon Production Counter</title>
+  <style>
+    :root {
+      --bg:#f4f7f6; --card:#fff; --text:#172321; --muted:#66736f; --line:#dfe7e4;
+      --brand:#0f766e; --brand2:#115e59; --brand-soft:#e6f4f2; --danger:#b42318;
+      --danger-soft:#fff0ee; --warning:#9a6700; --warning-soft:#fff7db; --ok:#18794e;
+      --ok-soft:#eaf7ef; --shadow:0 8px 28px rgba(20,51,46,.08); --r:18px;
+    }
+    *{box-sizing:border-box}
+    html{-webkit-text-size-adjust:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom));}
+    button,input,select{font:inherit}
+    button{touch-action:manipulation}
+    .app{max-width:760px;margin:0 auto;padding:14px 12px 28px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .brand h1{font-size:22px;margin:0;letter-spacing:-.35px}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .today-pill{white-space:nowrap;background:var(--brand-soft);color:var(--brand2);font-weight:800;font-size:12px;padding:8px 10px;border-radius:999px}
+    .tab{display:none}.tab.active{display:block}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+    .section{padding:16px;margin-bottom:12px}.section h2{margin:0 0 5px;font-size:18px}.section .hint{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}
+    .quality-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .quality-btn{border:1px solid var(--line);background:#fff;border-radius:16px;min-height:126px;padding:13px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;box-shadow:0 3px 12px rgba(20,51,46,.05);color:var(--text)}
+    .quality-btn:active{transform:scale(.975)}.quality-btn .q{font-size:28px;font-weight:900;letter-spacing:-.4px}.quality-btn .counts{font-size:14px;font-weight:800;margin-top:7px}.quality-btn .sub{font-size:11px;color:var(--muted);margin-top:3px}.quality-btn .badge{position:absolute;top:8px;right:8px;font-size:10px;color:var(--brand2);background:var(--brand-soft);padding:3px 7px;border-radius:999px;font-weight:800}
+    .quality-btn[data-quality="B"]{border-top:4px solid #2563eb}.quality-btn[data-quality="B+"]{border-top:4px solid #7c3aed}.quality-btn[data-quality="C+"]{border-top:4px solid #16a34a}.quality-btn[data-quality="BS"]{border-top:4px solid #d97706}.quality-btn[data-quality="MB"]{border-top:4px solid #dc2626}
+    .quick-help{display:flex;gap:8px;align-items:flex-start;background:#eef7f6;border-radius:14px;padding:12px;margin-top:12px;font-size:12.5px;color:#38514d;line-height:1.4}
+    .recent-list{display:grid;gap:8px}.recent-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:10px;margin-top:2px}.recent-row:first-child{border-top:0;padding-top:0}.recent-main{min-width:0}.recent-main strong{font-size:14px}.recent-main small{display:block;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recent-count{font-weight:900;white-space:nowrap}
+    .seg{display:grid;grid-template-columns:1fr 1fr;background:#edf2f0;border-radius:12px;padding:3px;gap:3px}.seg button{border:0;background:transparent;border-radius:10px;padding:10px 9px;font-weight:800;color:#52625e}.seg button.active{background:#fff;color:var(--brand2);box-shadow:0 2px 8px rgba(20,51,46,.08)}
+    .status-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.stat{background:#f7faf9;border:1px solid var(--line);border-radius:14px;padding:11px;text-align:center}.stat b{font-size:16px;display:block}.stat span{font-size:11px;color:var(--muted)}
+    .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.report-card{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}.report-card.hero{grid-column:1/-1;background:linear-gradient(135deg,#e8f6f4,#fff);border-color:#b9ddd8}.report-card .label{font-size:12px;color:var(--muted);font-weight:800}.report-card .big{font-size:21px;font-weight:900;margin-top:4px}.report-card .tiny{font-size:11px;color:var(--muted);margin-top:4px}.report-card .formula{display:inline-block;margin-top:7px;font-size:11px;font-weight:800;color:var(--brand2);background:var(--brand-soft);padding:4px 8px;border-radius:999px}
+    .primary,.secondary,.danger{border-radius:12px;padding:11px 14px;font-weight:800;border:1px solid transparent}.primary{background:var(--brand);color:#fff}.primary:active{background:var(--brand2)}.secondary{background:#fff;border-color:var(--line);color:var(--text)}.danger{background:var(--danger-soft);border-color:#f5c1ba;color:var(--danger)}.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn-row>*{flex:1;min-width:120px}
+    .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:11px;color:var(--muted);font-weight:800}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px 10px;color:var(--text);min-height:44px}.field.full{grid-column:1/-1}.custom-dates{display:none;grid-column:1/-1;grid-template-columns:1fr 1fr;gap:8px}.custom-dates.show{display:grid}
+    .summary-line{margin-top:12px;padding:11px 12px;border-radius:13px;background:#f7faf9;border:1px solid var(--line);font-size:13px;font-weight:800}.summary-line span{color:var(--brand2)}
+    .batchbar{position:sticky;top:8px;z-index:5;display:none;align-items:center;gap:7px;background:#163b37;color:#fff;padding:9px;border-radius:14px;margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.15)}.batchbar.show{display:flex}.batchbar .n{font-size:12px;font-weight:900;margin-right:auto;padding-left:4px}.batchbar button{border:0;border-radius:10px;padding:9px 10px;font-weight:800}.batchbar .deliver{background:#fff;color:#163b37}.batchbar .undo{background:#d8eee9;color:#163b37}.batchbar .clear{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .log-list{display:grid;gap:9px;margin-top:10px}.log-card{border:1px solid var(--line);border-radius:15px;background:#fff;padding:12px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start}.log-card.selected{outline:2px solid var(--brand);background:#f8fffd}.selectbox{width:22px;height:22px;accent-color:var(--brand);margin-top:2px}.log-q{font-size:16px;font-weight:900}.log-meta{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}.log-count{font-size:14px;font-weight:900;text-align:right}.pill{display:inline-flex;align-items:center;font-size:10px;font-weight:900;padding:4px 7px;border-radius:999px;margin-top:5px}.pill.room{background:var(--warning-soft);color:var(--warning)}.pill.delivered{background:var(--ok-soft);color:var(--ok)}.pill.foam{background:#eef2ff;color:#4338ca;margin-left:4px}.log-actions{grid-column:2/4;display:flex;gap:6px;justify-content:flex-end}.iconbtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px}.empty{text-align:center;color:var(--muted);padding:24px 10px;font-size:13px}
+    .people-summary{display:grid;gap:8px;margin-top:10px}.person-card{border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:#fff}.person-top{display:flex;justify-content:space-between;gap:10px;font-weight:900}.person-detail{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+    .worker-list{display:grid;gap:8px}.worker-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px 11px;background:#fff}.worker-num{width:42px;height:42px;border-radius:12px;background:var(--brand-soft);display:grid;place-items:center;font-weight:900;color:var(--brand2);font-size:16px}.worker-name{font-size:16px;font-weight:850;flex:1}.worker-row button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px}
+    .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings-grid button{min-height:46px}.danger-zone{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+    .bottom-nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);z-index:20}.bottom-nav button{border:0;background:transparent;color:#71807c;font-size:11px;font-weight:800;padding:6px 3px;border-radius:12px}.bottom-nav button .ico{display:block;font-size:21px;line-height:1.1;margin-bottom:3px}.bottom-nav button.active{color:var(--brand2);background:var(--brand-soft)}
+    .modal{position:fixed;inset:0;background:rgba(8,24,22,.48);display:none;align-items:flex-end;z-index:50}.modal.open{display:flex}.sheet{width:100%;max-width:760px;margin:0 auto;background:#fff;border-radius:22px 22px 0 0;padding:13px 14px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;box-shadow:0 -12px 36px rgba(0,0,0,.18)}.sheet-handle{width:44px;height:5px;background:#d8dfdd;border-radius:999px;margin:0 auto 12px}.sheet-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.sheet-head h3{margin:0;font-size:20px}.closebtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:20px}.count-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.countbox label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px}.countbox input{width:100%;font-size:30px;font-weight:900;text-align:center;border:1px solid var(--line);border-radius:14px;padding:12px 6px;min-height:66px}.worker-label{font-size:12px;color:var(--muted);font-weight:800;margin:12px 0 7px}.worker-chips{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.worker-chip{border:1px solid var(--line);border-radius:14px;background:#fff;padding:10px;min-height:58px;text-align:left}.worker-chip.selected{border-color:var(--brand);background:var(--brand-soft);box-shadow:inset 0 0 0 1px var(--brand)}.worker-chip .num{font-weight:950;font-size:18px;display:inline-block;margin-right:6px}.worker-chip .name{font-size:15px;font-weight:800}.worker-chip.none{grid-column:1/-1;text-align:center;min-height:44px}.checkline{display:flex;align-items:center;gap:10px;margin:13px 0;padding:11px;border:1px solid var(--line);border-radius:13px;background:#fafcfc}.checkline input{width:22px;height:22px;accent-color:var(--brand)}.checkline b{display:block}.checkline small{display:block;color:var(--muted);margin-top:2px}
+    .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#153632;color:#fff;padding:10px 14px;border-radius:999px;font-size:13px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:100;max-width:90%;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+    .modal-form-actions{display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:12px}.modal-form-actions button{min-height:48px}
+    .edit-worker-form{display:none;margin:10px 0;padding:12px;border:1px solid var(--line);border-radius:14px;background:#f9fbfa}.edit-worker-form.show{display:block}.edit-worker-form .row{display:grid;grid-template-columns:90px 1fr;gap:8px}.edit-worker-form input{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px;min-height:44px}
+    .note{font-size:12px;color:var(--muted);line-height:1.45}
+    @media (max-width:390px){.quality-grid{gap:7px}.quality-btn{min-height:112px}.quality-btn .q{font-size:25px}.report-grid{grid-template-columns:1fr}.report-card.hero{grid-column:auto}.status-strip{grid-template-columns:1fr}.worker-chips{grid-template-columns:1fr 1fr}}
+  </style>
 </head>
 <body>
-    <div class="app">
-        <header class="app-header">
-            <h1>🐟 Salmon <span>v4</span></h1>
-            <div class="header-actions">
-                <button onclick="exportCSV()">📤 CSV</button>
-                <button onclick="clearAllData()" class="btn-danger">🗑️ Clear</button>
-            </div>
-        </header>
-
-        <!-- Production Tab -->
-        <div id="tabProduction" class="tab-content active">
-            <div class="quality-grid" id="qualityGrid"></div>
-            <div class="logs-section">
-                <div class="filter-bar">
-                    <select id="filterDateRange">
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="custom">Custom</option>
-                    </select>
-                    <input type="date" id="filterDateFrom" style="display:none;" />
-                    <input type="date" id="filterDateTo" style="display:none;" />
-                    <button class="btn-secondary" onclick="applyFilters()">Apply</button>
-                    <select id="filterQuality">
-                        <option value="all">All Qualities</option>
-                        <option value="B">B</option>
-                        <option value="B+">B+</option>
-                        <option value="C+">C+</option>
-                        <option value="BS">BS</option>
-                        <option value="MB">MB</option>
-                    </select>
-                    <select id="filterWorker"><option value="all">All Workers</option></select>
-                    <select id="filterDelivered">
-                        <option value="all">All</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="remaining">Remaining</option>
-                    </select>
-                    <button class="btn-secondary" onclick="resetFilters()">Reset</button>
-                </div>
-
-                <!-- Batch actions -->
-                <div class="batch-actions" id="batchActions">
-                    <span class="info" id="selectionInfo">0 selected</span>
-                    <button class="btn-primary" onclick="batchDeliver(true)">✅ Mark Selected as Delivered</button>
-                    <button class="btn-secondary" onclick="batchDeliver(false)">⏳ Mark Selected as Remaining</button>
-                    <button class="btn-secondary" onclick="clearSelection()">Clear Selection</button>
-                </div>
-
-                <div class="summary-mini" id="summaryMini"></div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr>
-                            <th class="select-col"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()" /></th>
-                            <th>Date</th><th>Quality</th><th>Full</th><th>Half</th><th>Worker</th><th>Delivered</th><th style="text-align:center;">Actions</th>
-                        </tr></thead>
-                        <tbody id="entriesBody"></tbody>
-                    </table>
-                </div>
-                <div class="table-footer">
-                    <span id="entryCount">0 entries</span>
-                    <span id="totalFullBoxes">Total: 0 full, 0 half</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dashboard Tab -->
-        <div id="tabDashboard" class="tab-content">
-            <div style="margin-top:12px;">
-                <div class="dashboard-grid" id="dashboardGrid"></div>
-                <div style="background:#fff;border-radius:14px;padding:16px;border:1px solid #e2e8f0;margin-top:12px;">
-                    <h3 style="font-size:16px;margin-bottom:8px;">📊 Today's Breakdown</h3>
-                    <div id="dashboardBreakdown"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Workers Tab -->
-        <div id="tabWorkers" class="tab-content">
-            <div class="workers-section">
-                <h2>👥 Manage Workers</h2>
-                <div class="worker-form-row" id="workerFormRow">
-                    <input type="number" id="workerNumber" placeholder="Number (ID)" min="1" />
-                    <input type="text" id="workerName" placeholder="Name" />
-                    <button class="btn-primary" id="workerSubmitBtn" onclick="handleWorkerSubmit()">➕ Add</button>
-                    <button class="btn-secondary" onclick="cancelWorkerEdit()" id="workerCancelBtn" style="display:none;">Cancel</button>
-                </div>
-                <div class="worker-list" id="workerList"></div>
-                <div style="margin-top:8px;font-size:12px;color:#94a3b8;"><span id="workerCount">0 workers</span></div>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <button class="active" data-tab="tabProduction">📊 Production</button>
-            <button data-tab="tabDashboard">📈 Dashboard</button>
-            <button data-tab="tabWorkers">👥 Workers</button>
-        </nav>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand"><h1>Salmon Production</h1><p>Fast count · separate full & half boxes</p></div>
+      <div class="today-pill" id="todayPill">Today</div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal-overlay" id="entryModal">
-        <div class="modal-sheet">
-            <div class="modal-header">
-                <h2 id="modalTitle">Add Entry</h2>
-                <button class="close-btn" onclick="closeModal()">✕</button>
-            </div>
-            <form id="modalForm" onsubmit="handleModalSubmit(event)">
-                <div class="form-group">
-                    <label>Quality</label>
-                    <input type="text" id="modalQuality" readonly style="background:#f1f5f9;font-weight:600;" />
-                </div>
-                <div class="inline-group">
-                    <div class="form-group">
-                        <label for="modalFullCount">📦 Full Boxes</label>
-                        <input type="number" id="modalFullCount" min="0" step="1" value="0" inputmode="numeric" />
-                    </div>
-                    <div class="form-group">
-                        <label for="modalHalfCount">🧊 Half Boxes</label>
-                        <input type="number" id="modalHalfCount" min="0" step="1" value="0" inputmode="numeric" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>👤 Worker (tap to select)</label>
-                    <div class="worker-chips" id="workerChips"></div>
-                    <input type="hidden" id="modalWorker" value="" />
-                </div>
-                <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;">
-                    <label style="margin:0;">📦 Delivered</label>
-                    <input type="checkbox" id="modalDelivered" style="width:24px;height:24px;margin:0;" />
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn-primary">➕ Add Entry</button>
-                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
-                </div>
-            </form>
+    <main>
+      <section class="tab active" id="tab-entry">
+        <div class="card section">
+          <h2>Quick entry</h2>
+          <p class="hint">Tap a quality. Enter full boxes and half boxes together. New production always starts as <b>in the transmission room</b>.</p>
+          <div class="quality-grid" id="qualityGrid"></div>
+          <div class="quick-help"><span>💡</span><div>The numbers on these buttons are <b>today's production</b>. A half box stays a half box; it is never converted into 0.5 of a full box.</div></div>
         </div>
+        <div class="card section">
+          <h2>Latest today</h2>
+          <p class="hint">Your newest entries, so you can quickly check that the count was recorded correctly.</p>
+          <div class="recent-list" id="recentList"></div>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-dashboard">
+        <div class="card section">
+          <h2>Today's dashboard</h2>
+          <p class="hint">Switch between what is physically in the transmission room and everything produced today.</p>
+          <div class="seg" id="dashboardMode">
+            <button class="active" data-mode="room">In room · exclude delivered</button>
+            <button data-mode="all">All produced · include delivered</button>
+          </div>
+          <div class="status-strip" id="statusStrip"></div>
+          <div class="report-grid" id="reportGrid"></div>
+          <div class="btn-row"><button class="primary" id="copyReportBtn">Copy today's report</button></div>
+          <p class="note" style="margin:10px 0 0">For the reporting total called <b>B</b>, this tool calculates <b>B + MB</b>. B and MB are still shown separately underneath.</p>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-logs">
+        <div class="card section">
+          <h2>Logs & delivery</h2>
+          <p class="hint">Filter entries, select the batches that left the room, then mark them delivered together.</p>
+          <div class="filters">
+            <div class="field"><label>Date range</label><select id="filterRange"><option value="today">Today</option><option value="week">This week</option><option value="all">All dates</option><option value="custom">Custom</option></select></div>
+            <div class="field"><label>Worker</label><select id="filterWorker"></select></div>
+            <div class="field"><label>Quality</label><select id="filterQuality"><option value="all">All qualities</option><option>B</option><option>B+</option><option>C+</option><option>BS</option><option>MB</option></select></div>
+            <div class="field"><label>Status</label><select id="filterStatus"><option value="all">All status</option><option value="room">In room</option><option value="delivered">Delivered</option></select></div>
+            <div class="custom-dates" id="customDates"><div class="field"><label>From</label><input type="date" id="filterFrom"></div><div class="field"><label>To</label><input type="date" id="filterTo"></div></div>
+          </div>
+          <div class="summary-line" id="logSummary"></div>
+          <div class="btn-row"><button class="secondary" id="selectAllBtn">Select visible</button><button class="secondary" id="clearFiltersBtn">Reset filters</button></div>
+          <div class="batchbar" id="batchbar"><div class="n" id="batchCount">0 selected</div><button class="deliver" id="markDeliveredBtn">Delivered</button><button class="undo" id="markRoomBtn">Return</button><button class="clear" id="clearSelectionBtn">×</button></div>
+          <div class="log-list" id="logList"></div>
+        </div>
+        <div class="card section">
+          <h2>Employee summary</h2>
+          <p class="hint">Uses the same date/worker/quality filters above. Full and half remain separate.</p>
+          <div class="people-summary" id="peopleSummary"></div>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-workers">
+        <div class="card section">
+          <h2>Workers</h2>
+          <p class="hint"><span id="workerCount"></span> · tap Edit to change a name or number. The entry screen only shows workers saved here.</p>
+          <div class="worker-list" id="workerList"></div>
+          <div class="edit-worker-form" id="workerForm">
+            <div class="row"><input id="workerNumber" inputmode="numeric" pattern="[0-9]*" placeholder="No."><input id="workerName" placeholder="Worker name"></div>
+            <div class="btn-row"><button class="secondary" id="cancelWorkerBtn">Cancel</button><button class="primary" id="saveWorkerBtn">Save worker</button></div>
+          </div>
+          <div class="btn-row"><button class="primary" id="addWorkerBtn">+ Add worker</button></div>
+        </div>
+        <div class="card section">
+          <h2>Data & backup</h2>
+          <p class="hint">Production is stored in this browser on this device. Export a backup occasionally, especially before clearing Safari data or changing phones.</p>
+          <div class="settings-grid"><button class="secondary" id="exportCsvBtn">Export CSV</button><button class="secondary" id="exportJsonBtn">Backup JSON</button><button class="secondary" id="importJsonBtn">Restore JSON</button><button class="danger" id="clearEntriesBtn">Clear production</button></div>
+          <input type="file" accept="application/json,.json" id="importFile" hidden>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="active" data-tab="entry"><span class="ico">➕</span>Entry</button>
+    <button data-tab="dashboard"><span class="ico">📊</span>Dashboard</button>
+    <button data-tab="logs"><span class="ico">📋</span>Logs</button>
+    <button data-tab="workers"><span class="ico">👥</span>Workers</button>
+  </nav>
+
+  <div class="modal" id="entryModal">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head"><div><div class="note" id="modalModeLabel">New production</div><h3 id="modalTitle">Add B</h3></div><button class="closebtn" id="closeModalBtn">×</button></div>
+      <form id="entryForm">
+        <input type="hidden" id="modalQuality"><input type="hidden" id="modalWorker"><input type="hidden" id="editingId">
+        <div class="count-grid">
+          <div class="countbox"><label>FULL BOXES</label><input id="fullCount" type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" value="0"></div>
+          <div class="countbox"><label>HALF BOXES</label><input id="halfCount" type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" value="0"></div>
+        </div>
+        <div class="worker-label">WHO MADE IT? · OPTIONAL</div>
+        <div class="worker-chips" id="workerChips"></div>
+        <label class="checkline"><input type="checkbox" id="foamBox"><span><b>Foam box</b><small>Optional. Applies to this whole entry.</small></span></label>
+        <div class="modal-form-actions"><button type="button" class="secondary" id="cancelEntryBtn">Cancel</button><button type="submit" class="primary" id="saveEntryBtn">Save production</button></div>
+      </form>
     </div>
-
-    <div id="toast" class="toast"></div>
-
-    <script>
-        // ─── DATA LAYER ──────────────────────────────
-        let storage = (function() {
-            try {
-                if (window.localStorage) {
-                    return {
-                        get: (key) => JSON.parse(localStorage.getItem(key)),
-                        set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
-                        remove: (key) => localStorage.removeItem(key)
-                    };
-                }
-            } catch (e) {}
-            try {
-                if (window.sessionStorage) {
-                    return {
-                        get: (key) => JSON.parse(sessionStorage.getItem(key)),
-                        set: (key, val) => sessionStorage.setItem(key, JSON.stringify(val)),
-                        remove: (key) => sessionStorage.removeItem(key)
-                    };
-                }
-            } catch (e) {}
-            const mem = {};
-            return {
-                get: (key) => mem[key] || null,
-                set: (key, val) => { mem[key] = val; },
-                remove: (key) => { delete mem[key]; }
-            };
-        })();
-
-        const STORAGE_ENTRIES = 'salmon_entries_v4';
-        const STORAGE_WORKERS = 'salmon_workers';
-
-        function loadEntries() {
-            let data = storage.get(STORAGE_ENTRIES) || [];
-            data = data.map(e => {
-                if (e.boxCount !== undefined && e.boxType !== undefined) {
-                    if (e.boxType === 'full') {
-                        e.fullCount = e.boxCount;
-                        e.halfCount = 0;
-                    } else {
-                        e.fullCount = 0;
-                        e.halfCount = e.boxCount;
-                    }
-                    delete e.boxCount;
-                    delete e.boxType;
-                }
-                if (e.delivered === undefined) e.delivered = false;
-                if (e.fullCount === undefined) e.fullCount = 0;
-                if (e.halfCount === undefined) e.halfCount = 0;
-                return e;
-            });
-            return data;
-        }
-
-        function saveEntries(data) { storage.set(STORAGE_ENTRIES, data); }
-
-        function loadWorkers() {
-            let w = storage.get(STORAGE_WORKERS);
-            if (w && w.length) return w;
-            const defaults = [
-                { number: 1, name: 'Qi Che' },
-                { number: 2, name: 'Suman' },
-                { number: 3, name: 'Arjun' },
-                { number: 6, name: 'Aorigele' },
-                { number: 7, name: 'Jie Tang' },
-                { number: 9, name: 'Yongfu Tang' }
-            ];
-            saveWorkers(defaults);
-            return defaults;
-        }
-
-        function saveWorkers(data) { storage.set(STORAGE_WORKERS, data); }
-
-        let entries = loadEntries();
-        let workers = loadWorkers();
-        let editingEntryId = null;
-        let selectedWorkerNum = null;
-        let editingWorkerNumber = null;
-
-        // ─── SELECTION STATE ──────────────────────────
-        let selectedIds = new Set();
-
-        // ─── HELPERS ──────────────────────────────────
-        function todayStr() { return new Date().toISOString().slice(0, 10); }
-
-        function getWorkerByNumber(num) { return workers.find(w => w.number === num); }
-
-        function getTodayEntries() {
-            const t = todayStr();
-            return entries.filter(e => e.date === t);
-        }
-
-        function getCounts(entriesList) {
-            const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
-            const result = {};
-            qualities.forEach(q => {
-                result[q] = { full: 0, half: 0, deliveredFull: 0, deliveredHalf: 0 };
-            });
-            entriesList.forEach(e => {
-                if (result[e.quality]) {
-                    result[e.quality].full += e.fullCount || 0;
-                    result[e.quality].half += e.halfCount || 0;
-                    if (e.delivered) {
-                        result[e.quality].deliveredFull += e.fullCount || 0;
-                        result[e.quality].deliveredHalf += e.halfCount || 0;
-                    }
-                }
-            });
-            return result;
-        }
-
-        // ─── TOAST ────────────────────────────────────
-        let toastTimeout;
-
-        function showToast(msg, type = 'info') {
-            const el = document.getElementById('toast');
-            if (!el) { alert(msg); return; }
-            el.textContent = msg;
-            el.className = 'toast ' + type;
-            void el.offsetWidth;
-            el.classList.add('show');
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => el.classList.remove('show'), 2500);
-        }
-
-        // ─── WORKER CHIPS ─────────────────────────────
-        function renderWorkerChips() {
-            const container = document.getElementById('workerChips');
-            const sorted = [...workers].sort((a, b) => a.number - b.number);
-            let html =
-                `<div class="worker-chip none-chip ${!selectedWorkerNum ? 'selected' : ''}" onclick="selectWorker(null)">None</div>`;
-            sorted.forEach(w => {
-                const sel = (selectedWorkerNum === w.number) ? 'selected' : '';
-                html += `<div class="worker-chip ${sel}" onclick="selectWorker(${w.number})">
-                            <span class="chip-num">#${w.number}</span> ${w.name}
-                        </div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function selectWorker(num) {
-            selectedWorkerNum = (selectedWorkerNum === num) ? null : num;
-            document.getElementById('modalWorker').value = selectedWorkerNum || '';
-            renderWorkerChips();
-        }
-
-        // ─── MODAL ────────────────────────────────────
-        function openModal(quality) {
-            selectedWorkerNum = null;
-            document.getElementById('modalQuality').value = quality;
-            document.getElementById('modalTitle').textContent = `Add ${quality} Entry`;
-            document.getElementById('modalFullCount').value = 0;
-            document.getElementById('modalHalfCount').value = 0;
-            document.getElementById('modalDelivered').checked = false;
-            document.getElementById('modalWorker').value = '';
-            renderWorkerChips();
-            document.getElementById('entryModal').classList.add('active');
-            document.getElementById('modalFullCount').focus();
-        }
-
-        function closeModal() {
-            document.getElementById('entryModal').classList.remove('active');
-            editingEntryId = null;
-        }
-
-        function handleModalSubmit(e) {
-            e.preventDefault();
-            const quality = document.getElementById('modalQuality').value.trim();
-            const fullCount = parseInt(document.getElementById('modalFullCount').value) || 0;
-            const halfCount = parseInt(document.getElementById('modalHalfCount').value) || 0;
-            const workerNum = parseInt(document.getElementById('modalWorker').value) || null;
-            const delivered = document.getElementById('modalDelivered').checked;
-            const date = todayStr();
-
-            if (!quality) { showToast('Quality required.', 'error'); return; }
-            if (fullCount === 0 && halfCount === 0) { showToast('Add at least one box.', 'error'); return; }
-
-            const entry = {
-                id: editingEntryId || Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7),
-                date,
-                quality,
-                fullCount,
-                halfCount,
-                workerNum,
-                delivered,
-                updatedAt: new Date().toISOString()
-            };
-
-            if (editingEntryId) {
-                const idx = entries.findIndex(e => e.id === editingEntryId);
-                if (idx !== -1) entries[idx] = entry;
-                else entries.push(entry);
-                editingEntryId = null;
-                showToast('Entry updated!', 'success');
-            } else {
-                entries.push(entry);
-                showToast('Entry added!', 'success');
-            }
-
-            saveEntries(entries);
-            closeModal();
-            renderAll();
-        }
-
-        // ─── SELECTION HELPERS ────────────────────────
-        function toggleSelectAll() {
-            const checked = document.getElementById('selectAll').checked;
-            const filtered = getFilteredEntries();
-            if (checked) {
-                filtered.forEach(e => selectedIds.add(e.id));
-            } else {
-                filtered.forEach(e => selectedIds.delete(e.id));
-            }
-            renderTable(filtered);
-            updateSelectionInfo();
-        }
-
-        function toggleSelect(id) {
-            if (selectedIds.has(id)) selectedIds.delete(id);
-            else selectedIds.add(id);
-            const filtered = getFilteredEntries();
-            renderTable(filtered);
-            updateSelectionInfo();
-            // Update select all checkbox
-            const allChecked = filtered.every(e => selectedIds.has(e.id));
-            document.getElementById('selectAll').checked = allChecked && filtered.length > 0;
-        }
-
-        function clearSelection() {
-            selectedIds.clear();
-            document.getElementById('selectAll').checked = false;
-            const filtered = getFilteredEntries();
-            renderTable(filtered);
-            updateSelectionInfo();
-        }
-
-        function updateSelectionInfo() {
-            document.getElementById('selectionInfo').textContent = `${selectedIds.size} selected`;
-        }
-
-        function batchDeliver(deliver) {
-            if (selectedIds.size === 0) {
-                showToast('No entries selected.', 'error');
-                return;
-            }
-            const msg = deliver ? `Mark ${selectedIds.size} entries as delivered?` :
-                `Mark ${selectedIds.size} entries as remaining?`;
-            if (!confirm(msg)) return;
-
-            entries.forEach(e => {
-                if (selectedIds.has(e.id)) {
-                    e.delivered = deliver;
-                }
-            });
-            saveEntries(entries);
-            clearSelection();
-            renderAll();
-            showToast(`${selectedIds.size} entries updated.`, 'success');
-        }
-
-        // ─── RENDER ──────────────────────────────────
-        function renderQualityButtons() {
-            const todayEntries = getTodayEntries();
-            const counts = getCounts(todayEntries);
-            const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
-            let html = '';
-            qualities.forEach(q => {
-                const total = counts[q].full + counts[q].half;
-                const cls = 'quality-' + q.replace('+', 'plus');
-                html += `
-                    <div class="q-btn ${cls}" onclick="openModal('${q}')">
-                        <span class="q-badge">${q}</span>
-                        <span class="q-count">${total}</span>
-                        <span class="q-sub">boxes today</span>
-                    </div>
-                `;
-            });
-            document.getElementById('qualityGrid').innerHTML = html;
-        }
-
-        function getFilteredEntries() {
-            let filtered = [...entries];
-            const range = document.getElementById('filterDateRange').value;
-            if (range === 'today') {
-                const t = todayStr();
-                filtered = filtered.filter(e => e.date === t);
-            } else if (range === 'week') {
-                const now = new Date();
-                const day = now.getDay() || 7;
-                const diff = day - 1;
-                const monday = new Date(now);
-                monday.setDate(now.getDate() - diff);
-                const from = monday.toISOString().slice(0, 10);
-                const to = todayStr();
-                filtered = filtered.filter(e => e.date >= from && e.date <= to);
-            } else if (range === 'custom') {
-                const from = document.getElementById('filterDateFrom').value;
-                const to = document.getElementById('filterDateTo').value;
-                if (from) filtered = filtered.filter(e => e.date >= from);
-                if (to) filtered = filtered.filter(e => e.date <= to);
-            }
-            const qf = document.getElementById('filterQuality').value;
-            if (qf !== 'all') filtered = filtered.filter(e => e.quality === qf);
-            const wv = document.getElementById('filterWorker').value;
-            if (wv !== 'all' && wv) {
-                const num = parseInt(wv);
-                filtered = filtered.filter(e => e.workerNum === num);
-            }
-            const del = document.getElementById('filterDelivered').value;
-            if (del === 'delivered') filtered = filtered.filter(e => e.delivered === true);
-            else if (del === 'remaining') filtered = filtered.filter(e => e.delivered === false);
-            return filtered;
-        }
-
-        function renderSummaryMini(filtered) {
-            const counts = getCounts(filtered);
-            const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
-            let totalFull = 0,
-                totalHalf = 0;
-            let totalDeliveredFull = 0,
-                totalDeliveredHalf = 0;
-            qualities.forEach(q => {
-                totalFull += counts[q].full;
-                totalHalf += counts[q].half;
-                totalDeliveredFull += counts[q].deliveredFull;
-                totalDeliveredHalf += counts[q].deliveredHalf;
-            });
-            const remainingFull = totalFull - totalDeliveredFull;
-            const remainingHalf = totalHalf - totalDeliveredHalf;
-
-            let html = `<span class="item">📦 Total: <span class="num">${totalFull}</span> full + <span class="num">${totalHalf}</span> half</span>`;
-            html +=
-                `<span class="item">✅ Delivered: <span class="num">${totalDeliveredFull}</span> full + <span class="num">${totalDeliveredHalf}</span> half</span>`;
-            html +=
-                `<span class="item">📦 Remaining: <span class="num">${remainingFull}</span> full + <span class="num">${remainingHalf}</span> half</span>`;
-
-            qualities.forEach(q => {
-                const f = counts[q].full;
-                const h = counts[q].half;
-                const df = counts[q].deliveredFull;
-                const dh = counts[q].deliveredHalf;
-                if (f > 0 || h > 0) {
-                    html +=
-                        `<span class="item">${q}: <span class="num">${f}</span> full + <span class="half">${h}</span> half (delivered: ${df} full + ${dh} half)</span>`;
-                }
-            });
-            document.getElementById('summaryMini').innerHTML = html;
-        }
-
-        function renderTable(filtered) {
-            const tbody = document.getElementById('entriesBody');
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">📭 No entries.</div></td></tr>`;
-                document.getElementById('entryCount').textContent = '0 entries';
-                document.getElementById('totalFullBoxes').textContent = 'Total: 0 full, 0 half';
-                return;
-            }
-            const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
-            let rows = '';
-            sorted.forEach(e => {
-                const qCls = e.quality.replace('+', 'plus');
-                const workerDisplay = e.workerNum ? `#${e.workerNum} ${getWorkerByNumber(e.workerNum)?.name || ''}` : '—';
-                const deliveredLabel = e.delivered ? '✅ Delivered' : '⏳ Remaining';
-                const deliveredCls = e.delivered ? 'badge-delivered' : 'badge-not-delivered';
-                const checked = selectedIds.has(e.id) ? 'checked' : '';
-                rows += `
-                    <tr>
-                        <td class="select-col"><input type="checkbox" ${checked} onchange="toggleSelect('${e.id}')" /></td>
-                        <td><strong>${e.date}</strong></td>
-                        <td><span class="badge-quality ${qCls}">${e.quality}</span></td>
-                        <td>${e.fullCount || 0}</td>
-                        <td>${e.halfCount || 0}</td>
-                        <td>${workerDisplay}</td>
-                        <td><span class="${deliveredCls}">${deliveredLabel}</span></td>
-                        <td style="text-align:center;">
-                            <button onclick="toggleDelivered('${e.id}')" title="Toggle delivered">📦</button>
-                            <button onclick="editEntry('${e.id}')">✏️</button>
-                            <button onclick="deleteEntry('${e.id}')" class="delete-btn">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = rows;
-            let totalFull = 0,
-                totalHalf = 0;
-            filtered.forEach(e => {
-                totalFull += e.fullCount || 0;
-                totalHalf += e.halfCount || 0;
-            });
-            document.getElementById('entryCount').textContent = `${filtered.length} entries`;
-            document.getElementById('totalFullBoxes').textContent = `Total: ${totalFull} full, ${totalHalf} half`;
-
-            // Update select all
-            const allChecked = filtered.every(e => selectedIds.has(e.id));
-            document.getElementById('selectAll').checked = allChecked && filtered.length > 0;
-            updateSelectionInfo();
-        }
-
-        function renderWorkers() {
-            const sorted = [...workers].sort((a, b) => a.number - b.number);
-            const list = document.getElementById('workerList');
-            if (sorted.length === 0) {
-                list.innerHTML = '<div class="empty-state">No workers added yet.</div>';
-                document.getElementById('workerCount').textContent = '0 workers';
-                return;
-            }
-            let html = '';
-            sorted.forEach(w => {
-                html += `
-                    <div class="worker-item">
-                        <div class="info"><span class="num">#${w.number}</span> ${w.name}</div>
-                        <div class="actions">
-                            <button onclick="editWorker(${w.number})">✏️</button>
-                            <button onclick="deleteWorker(${w.number})" style="color:#b91c1c;">🗑️</button>
-                        </div>
-                    </div>
-                `;
-            });
-            list.innerHTML = html;
-            document.getElementById('workerCount').textContent = `${sorted.length} workers`;
-            renderWorkerChips();
-        }
-
-        function renderDashboard() {
-            const todayEntries = getTodayEntries();
-            const counts = getCounts(todayEntries);
-            const qualities = ['B', 'B+', 'C+', 'BS', 'MB'];
-            let totalFull = 0,
-                totalHalf = 0;
-            let totalDeliveredFull = 0,
-                totalDeliveredHalf = 0;
-            qualities.forEach(q => {
-                totalFull += counts[q].full;
-                totalHalf += counts[q].half;
-                totalDeliveredFull += counts[q].deliveredFull;
-                totalDeliveredHalf += counts[q].deliveredHalf;
-            });
-            const remainingFull = totalFull - totalDeliveredFull;
-            const remainingHalf = totalHalf - totalDeliveredHalf;
-            const totalBoxes = totalFull + totalHalf;
-            const deliveredBoxes = totalDeliveredFull + totalDeliveredHalf;
-            const remainingBoxes = remainingFull + remainingHalf;
-
-            const bFull = counts['B'].full + counts['MB'].full;
-            const bHalf = counts['B'].half + counts['MB'].half;
-            const bDeliveredFull = counts['B'].deliveredFull + counts['MB'].deliveredFull;
-            const bDeliveredHalf = counts['B'].deliveredHalf + counts['MB'].deliveredHalf;
-            const bRemainingFull = bFull - bDeliveredFull;
-            const bRemainingHalf = bHalf - bDeliveredHalf;
-
-            let gridHtml = `
-                <div class="dash-card">
-                    <div class="label">Total Production</div>
-                    <div class="value">${totalBoxes}</div>
-                    <div class="sub">${totalFull} full + ${totalHalf} half</div>
-                </div>
-                <div class="dash-card">
-                    <div class="label">Delivered</div>
-                    <div class="value delivered">${deliveredBoxes}</div>
-                    <div class="sub">${totalDeliveredFull} full + ${totalDeliveredHalf} half</div>
-                </div>
-                <div class="dash-card">
-                    <div class="label">Remaining</div>
-                    <div class="value remaining">${remainingBoxes}</div>
-                    <div class="sub">${remainingFull} full + ${remainingHalf} half</div>
-                </div>
-                <div class="dash-card dash-bcombined" style="grid-column:1/-1;">
-                    <div class="label">Combined B (B + MB)</div>
-                    <div class="value">${bFull + bHalf}</div>
-                    <div class="sub">${bFull} full + ${bHalf} half (delivered: ${bDeliveredFull + bDeliveredHalf})</div>
-                </div>
-            `;
-            document.getElementById('dashboardGrid').innerHTML = gridHtml;
-
-            let breakHtml = `<div class="dash-quality">`;
-            qualities.forEach(q => {
-                const f = counts[q].full;
-                const h = counts[q].half;
-                const df = counts[q].deliveredFull;
-                const dh = counts[q].deliveredHalf;
-                const total = f + h;
-                if (total > 0) {
-                    breakHtml += `<span class="q-item">${q}: <span class="q-num">${total}</span> (${f} full + ${h} half) · delivered: ${df + dh}</span>`;
-                }
-            });
-            breakHtml += `</div>`;
-            document.getElementById('dashboardBreakdown').innerHTML = breakHtml;
-        }
-
-        function renderAll() {
-            renderQualityButtons();
-            const filtered = getFilteredEntries();
-            renderSummaryMini(filtered);
-            renderTable(filtered);
-            renderWorkers();
-            renderDashboard();
-            populateFilterWorker();
-        }
-
-        // ─── FILTER WORKER DROPDOWN ──────────────────
-        function populateFilterWorker() {
-            const sel = document.getElementById('filterWorker');
-            const current = sel.value;
-            const sorted = [...workers].sort((a, b) => a.number - b.number);
-            sel.innerHTML = '<option value="all">All Workers</option>';
-            sorted.forEach(w => {
-                const opt = document.createElement('option');
-                opt.value = w.number;
-                opt.textContent = `${w.number} · ${w.name}`;
-                sel.appendChild(opt);
-            });
-            if (current && workers.some(w => String(w.number) === String(current))) sel.value = current;
-            else sel.value = 'all';
-        }
-
-        // ─── CRUD ENTRIES ─────────────────────────────
-        function deleteEntry(id) {
-            if (!confirm('Delete this entry?')) return;
-            entries = entries.filter(e => e.id !== id);
-            selectedIds.delete(id);
-            saveEntries(entries);
-            renderAll();
-            showToast('Entry deleted.', 'info');
-        }
-
-        function toggleDelivered(id) {
-            const entry = entries.find(e => e.id === id);
-            if (!entry) return;
-            entry.delivered = !entry.delivered;
-            saveEntries(entries);
-            renderAll();
-            showToast(entry.delivered ? 'Marked as delivered.' : 'Marked as remaining.', 'info');
-        }
-
-        function editEntry(id) {
-            const entry = entries.find(e => e.id === id);
-            if (!entry) return;
-            editingEntryId = id;
-            document.getElementById('modalQuality').value = entry.quality;
-            document.getElementById('modalTitle').textContent = `Edit ${entry.quality} Entry`;
-            document.getElementById('modalFullCount').value = entry.fullCount || 0;
-            document.getElementById('modalHalfCount').value = entry.halfCount || 0;
-            document.getElementById('modalDelivered').checked = entry.delivered || false;
-            selectedWorkerNum = entry.workerNum || null;
-            document.getElementById('modalWorker').value = selectedWorkerNum || '';
-            renderWorkerChips();
-            document.getElementById('entryModal').classList.add('active');
-            document.getElementById('modalFullCount').focus();
-        }
-
-        // ─── CRUD WORKERS ─────────────────────────────
-        function handleWorkerSubmit() {
-            const num = parseInt(document.getElementById('workerNumber').value);
-            const name = document.getElementById('workerName').value.trim();
-            if (isNaN(num) || num < 1) { showToast('Enter valid number.', 'error'); return; }
-            if (!name) { showToast('Enter name.', 'error'); return; }
-
-            const existing = workers.find(w => w.number === num);
-            if (existing && editingWorkerNumber === null) {
-                showToast(`#${num} already exists.`, 'error');
-                return;
-            }
-
-            if (editingWorkerNumber !== null) {
-                const idx = workers.findIndex(w => w.number === editingWorkerNumber);
-                if (idx !== -1) {
-                    if (editingWorkerNumber !== num) {
-                        const conflict = workers.find(w => w.number === num);
-                        if (conflict) { showToast(`#${num} already used.`, 'error'); return; }
-                        workers[idx].number = num;
-                    }
-                    workers[idx].name = name;
-                }
-                editingWorkerNumber = null;
-                document.getElementById('workerSubmitBtn').textContent = '➕ Add';
-                document.getElementById('workerCancelBtn').style.display = 'none';
-                showToast('Worker updated.', 'success');
-            } else {
-                workers.push({ number: num, name });
-                showToast('Worker added.', 'success');
-            }
-
-            saveWorkers(workers);
-            renderAll();
-            document.getElementById('workerNumber').value = '';
-            document.getElementById('workerName').value = '';
-        }
-
-        function editWorker(number) {
-            const w = workers.find(w => w.number === number);
-            if (!w) return;
-            editingWorkerNumber = number;
-            document.getElementById('workerNumber').value = w.number;
-            document.getElementById('workerName').value = w.name;
-            document.getElementById('workerSubmitBtn').textContent = '✏️ Update';
-            document.getElementById('workerCancelBtn').style.display = 'inline-block';
-        }
-
-        function cancelWorkerEdit() {
-            editingWorkerNumber = null;
-            document.getElementById('workerNumber').value = '';
-            document.getElementById('workerName').value = '';
-            document.getElementById('workerSubmitBtn').textContent = '➕ Add';
-            document.getElementById('workerCancelBtn').style.display = 'none';
-        }
-
-        function deleteWorker(number) {
-            if (!confirm(`Delete worker #${number}?`)) return;
-            workers = workers.filter(w => w.number !== number);
-            saveWorkers(workers);
-            renderAll();
-            showToast('Worker deleted.', 'info');
-            cancelWorkerEdit();
-        }
-
-        // ─── FILTERS ──────────────────────────────────
-        function applyFilters() {
-            // Clear selection when filtering
-            clearSelection();
-            renderAll();
-        }
-
-        function resetFilters() {
-            document.getElementById('filterDateRange').value = 'today';
-            document.getElementById('filterDateFrom').style.display = 'none';
-            document.getElementById('filterDateTo').style.display = 'none';
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
-            document.getElementById('filterQuality').value = 'all';
-            document.getElementById('filterWorker').value = 'all';
-            document.getElementById('filterDelivered').value = 'all';
-            clearSelection();
-            renderAll();
-        }
-
-        document.getElementById('filterDateRange').addEventListener('change', function() {
-            if (this.value === 'custom') {
-                document.getElementById('filterDateFrom').style.display = 'inline-block';
-                document.getElementById('filterDateTo').style.display = 'inline-block';
-                document.getElementById('filterDateFrom').value = todayStr();
-                document.getElementById('filterDateTo').value = todayStr();
-            } else {
-                document.getElementById('filterDateFrom').style.display = 'none';
-                document.getElementById('filterDateTo').style.display = 'none';
-                document.getElementById('filterDateFrom').value = '';
-                document.getElementById('filterDateTo').value = '';
-            }
-            clearSelection();
-            renderAll();
-        });
-
-        document.getElementById('filterQuality').addEventListener('change', function() { clearSelection();
-            renderAll(); });
-        document.getElementById('filterWorker').addEventListener('change', function() { clearSelection();
-            renderAll(); });
-        document.getElementById('filterDelivered').addEventListener('change', function() { clearSelection();
-            renderAll(); });
-
-        // ─── EXPORT CSV ──────────────────────────────
-        function exportCSV() {
-            if (entries.length === 0) { showToast('No data.', 'error'); return; }
-            const headers = ['Date', 'Quality', 'Full Boxes', 'Half Boxes', 'Worker Number', 'Worker Name', 'Delivered'];
-            const rows = entries.map(e => {
-                const w = getWorkerByNumber(e.workerNum);
-                return [
-                    e.date, e.quality, e.fullCount || 0, e.halfCount || 0,
-                    e.workerNum || '', w ? w.name : '',
-                    e.delivered ? 'Yes' : 'No'
-                ];
-            });
-            let csv = headers.join(',') + '\n';
-            rows.forEach(r => {
-                csv += r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',') + '\n';
-            });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `salmon_${todayStr()}.csv`;
-            link.click();
-            URL.revokeObjectURL(link.href);
-            showToast('CSV exported!', 'success');
-        }
-
-        // ─── CLEAR ALL ────────────────────────────────
-        function clearAllData() {
-            if (!confirm('Delete ALL data?')) return;
-            if (!confirm('Are you sure?')) return;
-            entries = [];
-            selectedIds.clear();
-            saveEntries(entries);
-            renderAll();
-            showToast('All data cleared.', 'info');
-        }
-
-        // ─── TABS ─────────────────────────────────────
-        document.querySelectorAll('.bottom-nav button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const tabId = this.dataset.tab;
-                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        // ─── MODAL OVERLAY CLOSE ──────────────────────
-        document.getElementById('entryModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        // ─── INIT ─────────────────────────────────────
-        if (!workers.length) {
-            workers = loadWorkers();
-            saveWorkers(workers);
-        }
-        populateFilterWorker();
-        renderAll();
-
-        console.log('🐟 Tracker v4 – batch selection added');
-    </script>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const QUALITIES = ['B','B+','C+','BS','MB'];
+  const ENTRY_KEY = 'salmon_entries_v5'; // keep DeepSeek's latest key so existing phone data stays compatible
+  const WORKER_KEY = 'salmon_workers';
+  const OLD_ENTRY_KEYS = ['salmon_entries_v4','salmon_entries','salmon_production_entries'];
+  const OLD_WORKER_KEYS = ['salmon_production_workers'];
+  const MAX_WORKERS = 20;
+
+  const $ = (id) => document.getElementById(id);
+  let entries = [];
+  let workers = [];
+  let selectedIds = new Set();
+  let selectedWorkerNum = null;
+  let dashboardMode = 'room';
+  let editingWorkerOriginalNumber = null;
+
+  function localDateISO(d = new Date()) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function prettyDate(iso) {
+    if (!iso) return '';
+    const [y,m,d] = iso.split('-').map(Number);
+    return new Intl.DateTimeFormat(undefined,{day:'numeric',month:'short',year:'numeric'}).format(new Date(y,m-1,d));
+  }
+  function safeInt(v){ const n = parseInt(v,10); return Number.isFinite(n) && n > 0 ? n : 0; }
+  function nowISO(){ return new Date().toISOString(); }
+  function id(){ return (crypto.randomUUID ? crypto.randomUUID() : `${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`); }
+  function storageGet(key){ try { const raw=localStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
+  function storageSet(key,val){ try { localStorage.setItem(key,JSON.stringify(val)); return true; } catch(e){ toast('Could not save data in browser storage.'); return false; } }
+
+  function normalizeEntry(e){
+    const oldCount = safeInt(e.boxCount ?? e.count ?? 0);
+    const oldType = String(e.boxType || '').toLowerCase();
+    const fullCount = e.fullCount !== undefined ? safeInt(e.fullCount) : (oldType === 'full' ? oldCount : 0);
+    const halfCount = e.halfCount !== undefined ? safeInt(e.halfCount) : (oldType === 'half' ? oldCount : 0);
+    return {
+      id: String(e.id || id()),
+      date: e.date || localDateISO(),
+      quality: QUALITIES.includes(e.quality) ? e.quality : 'B',
+      fullCount, halfCount,
+      workerNum: e.workerNum ? parseInt(e.workerNum,10) : (e.workerNumber ? parseInt(e.workerNumber,10) : null),
+      foamBox: Boolean(e.foamBox),
+      delivered: Boolean(e.delivered),
+      deliveredAt: e.deliveredAt || null,
+      createdAt: e.createdAt || e.updatedAt || nowISO(),
+      updatedAt: e.updatedAt || e.createdAt || nowISO()
+    };
+  }
+  function loadEntries(){
+    let data = storageGet(ENTRY_KEY);
+    if (!Array.isArray(data)) {
+      for (const key of OLD_ENTRY_KEYS) { const old=storageGet(key); if (Array.isArray(old) && old.length) { data=old; break; } }
+    }
+    return Array.isArray(data) ? data.map(normalizeEntry) : [];
+  }
+  function saveEntries(){ storageSet(ENTRY_KEY, entries); }
+  function loadWorkers(){
+    let data = storageGet(WORKER_KEY);
+    if (!Array.isArray(data)) {
+      for (const key of OLD_WORKER_KEYS) { const old=storageGet(key); if (Array.isArray(old) && old.length) { data=old; break; } }
+    }
+    if (!Array.isArray(data) || !data.length) data = [
+      {number:1,name:'Qi Che'}, {number:2,name:'Suman'}, {number:3,name:'Arjun'},
+      {number:5,name:'Monk'}, {number:6,name:'Aorigele'}, {number:7,name:'Jie Tang'},
+      {number:8,name:'David'}, {number:9,name:'Yongfu Tang'}
+    ];
+    const normalized = data.map(w=>({number:parseInt(w.number,10),name:String(w.name||'').trim()})).filter(w=>Number.isFinite(w.number)&&w.name);
+    // Keep the confirmed factory IDs correct even when upgrading an older saved worker list.
+    const confirmed = new Map([[5,'Monk'],[8,'David']]);
+    confirmed.forEach((name, number)=>{
+      const existing = normalized.find(w=>w.number===number);
+      if (existing) existing.name = name;
+      else normalized.push({number,name});
+    });
+    return normalized.sort((a,b)=>a.number-b.number);
+  }
+  function saveWorkers(){ storageSet(WORKER_KEY, workers); }
+  function getWorker(num){ return workers.find(w=>w.number===num); }
+
+  function counts(list){
+    const out={}; QUALITIES.forEach(q=>out[q]={full:0,half:0});
+    list.forEach(e=>{ if(out[e.quality]){out[e.quality].full+=safeInt(e.fullCount);out[e.quality].half+=safeInt(e.halfCount);} });
+    return out;
+  }
+  function totalPair(list){ return list.reduce((a,e)=>({full:a.full+safeInt(e.fullCount),half:a.half+safeInt(e.halfCount)}),{full:0,half:0}); }
+  function pairText(p){ return `${p.full} full · ${p.half} half`; }
+  function todayEntries(){ const t=localDateISO(); return entries.filter(e=>e.date===t); }
+
+  let toastTimer;
+  function toast(msg){ const el=$('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
+
+  function renderHeader(){ $('todayPill').textContent=prettyDate(localDateISO()); }
+
+  function renderQualityGrid(){
+    const c=counts(todayEntries());
+    $('qualityGrid').innerHTML=QUALITIES.map(q=>`<button class="quality-btn" data-quality="${q}" aria-label="Add ${q} production"><span class="badge">today</span><span class="q">${q}</span><span class="counts">${c[q].full} F · ${c[q].half} H</span><span class="sub">tap to add</span></button>`).join('');
+    document.querySelectorAll('.quality-btn').forEach(btn=>btn.addEventListener('click',()=>openEntry(btn.dataset.quality)));
+  }
+
+  function renderRecent(){
+    const list=todayEntries().slice().sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,5);
+    if(!list.length){ $('recentList').innerHTML='<div class="empty">No production entered today yet.</div>'; return; }
+    $('recentList').innerHTML=list.map(e=>{ const w=getWorker(e.workerNum); return `<div class="recent-row"><div class="recent-main"><strong>${e.quality}${e.foamBox?' · Foam':''}</strong><small>${w?`#${w.number} ${escapeHtml(w.name)}`:'No worker'} · ${e.delivered?'Delivered':'In room'}</small></div><div class="recent-count">${e.fullCount} F · ${e.halfCount} H</div></div>`; }).join('');
+  }
+
+  function renderDashboard(){
+    const all=todayEntries();
+    const room=all.filter(e=>!e.delivered);
+    const delivered=all.filter(e=>e.delivered);
+    const display=dashboardMode==='room'?room:all;
+    const c=counts(display), allT=totalPair(all), roomT=totalPair(room), delT=totalPair(delivered);
+    $('statusStrip').innerHTML=`<div class="stat"><b>${pairText(allT)}</b><span>Produced today</span></div><div class="stat"><b>${pairText(delT)}</b><span>Delivered</span></div><div class="stat"><b>${pairText(roomT)}</b><span>In room now</span></div>`;
+    const bCombined={full:c.B.full+c.MB.full,half:c.B.half+c.MB.half};
+    const title=dashboardMode==='room'?'IN TRANSMISSION ROOM':'TOTAL PRODUCED TODAY';
+    let html=`<div class="report-card hero"><div class="label">${title} · REPORT B</div><div class="big">${pairText(bCombined)}</div><div class="formula">B report = B + MB</div></div>`;
+    QUALITIES.forEach(q=>{ html+=`<div class="report-card"><div class="label">${q}</div><div class="big">${c[q].full} F · ${c[q].half} H</div><div class="tiny">${c[q].full} full and ${c[q].half} half</div></div>`; });
+    $('reportGrid').innerHTML=html;
+  }
+
+  function mondayISO(){ const d=new Date(); const day=d.getDay()||7; d.setDate(d.getDate()-(day-1)); return localDateISO(d); }
+  function filteredEntries(){
+    let list=entries.slice(); const range=$('filterRange').value;
+    if(range==='today') list=list.filter(e=>e.date===localDateISO());
+    else if(range==='week'){ const from=mondayISO(),to=localDateISO(); list=list.filter(e=>e.date>=from&&e.date<=to); }
+    else if(range==='custom'){ const from=$('filterFrom').value,to=$('filterTo').value; if(from)list=list.filter(e=>e.date>=from); if(to)list=list.filter(e=>e.date<=to); }
+    const worker=$('filterWorker').value; if(worker!=='all') list=list.filter(e=>String(e.workerNum||'')===worker);
+    const quality=$('filterQuality').value; if(quality!=='all') list=list.filter(e=>e.quality===quality);
+    const status=$('filterStatus').value; if(status==='room')list=list.filter(e=>!e.delivered); else if(status==='delivered')list=list.filter(e=>e.delivered);
+    return list;
+  }
+  function renderFilters(){
+    const current=$('filterWorker').value || 'all';
+    $('filterWorker').innerHTML='<option value="all">All workers</option>'+workers.map(w=>`<option value="${w.number}">#${w.number} ${escapeHtml(w.name)}</option>`).join('');
+    $('filterWorker').value=[...$('filterWorker').options].some(o=>o.value===current)?current:'all';
+    $('customDates').classList.toggle('show',$('filterRange').value==='custom');
+  }
+  function renderLogs(){
+    const list=filteredEntries(); const total=totalPair(list); const room=totalPair(list.filter(e=>!e.delivered));
+    $('logSummary').innerHTML=`${list.length} entr${list.length===1?'y':'ies'} · <span>${total.full} full · ${total.half} half</span> · in room: ${room.full} F · ${room.half} H`;
+    const sorted=list.slice().sort((a,b)=>b.date.localeCompare(a.date)||String(b.createdAt).localeCompare(String(a.createdAt)));
+    if(!sorted.length){ $('logList').innerHTML='<div class="empty">No entries match these filters.</div>'; }
+    else $('logList').innerHTML=sorted.map(e=>{
+      const w=getWorker(e.workerNum), selected=selectedIds.has(e.id);
+      return `<div class="log-card ${selected?'selected':''}" data-id="${e.id}"><input class="selectbox log-select" type="checkbox" data-id="${e.id}" ${selected?'checked':''}><div><div class="log-q">${e.quality}</div><div class="log-meta">${prettyDate(e.date)}${w?` · #${w.number} ${escapeHtml(w.name)}`:' · No worker'}<br><span class="pill ${e.delivered?'delivered':'room'}">${e.delivered?'✓ Delivered':'● In room'}</span>${e.foamBox?'<span class="pill foam">Foam</span>':''}</div></div><div class="log-count">${e.fullCount} F<br>${e.halfCount} H</div><div class="log-actions"><button class="iconbtn edit-entry" data-id="${e.id}">Edit</button><button class="iconbtn delete-entry" data-id="${e.id}">Delete</button></div></div>`;
+    }).join('');
+    document.querySelectorAll('.log-select').forEach(el=>el.addEventListener('change',()=>toggleSelection(el.dataset.id)));
+    document.querySelectorAll('.edit-entry').forEach(el=>el.addEventListener('click',()=>editEntry(el.dataset.id)));
+    document.querySelectorAll('.delete-entry').forEach(el=>el.addEventListener('click',()=>deleteEntry(el.dataset.id)));
+    renderBatchBar(); renderPeopleSummary(list);
+  }
+  function renderPeopleSummary(list){
+    const grouped=new Map();
+    list.filter(e=>e.workerNum).forEach(e=>{ if(!grouped.has(e.workerNum))grouped.set(e.workerNum,[]);grouped.get(e.workerNum).push(e); });
+    if(!grouped.size){ $('peopleSummary').innerHTML='<div class="empty">No worker-assigned entries in this range.</div>'; return; }
+    $('peopleSummary').innerHTML=[...grouped.entries()].sort((a,b)=>a[0]-b[0]).map(([num,arr])=>{
+      const w=getWorker(num), t=totalPair(arr), c=counts(arr);
+      const detail=QUALITIES.filter(q=>c[q].full||c[q].half).map(q=>`${q}: ${c[q].full} F / ${c[q].half} H`).join(' · ');
+      return `<div class="person-card"><div class="person-top"><span>#${num} ${escapeHtml(w?.name||'Unknown')}</span><span>${t.full} F · ${t.half} H</span></div><div class="person-detail">${detail||'No boxes'}</div></div>`;
+    }).join('');
+  }
+
+  function renderBatchBar(){ $('batchbar').classList.toggle('show',selectedIds.size>0); $('batchCount').textContent=`${selectedIds.size} selected`; }
+  function toggleSelection(id){ selectedIds.has(id)?selectedIds.delete(id):selectedIds.add(id); renderLogs(); }
+  function selectVisible(){ const ids=filteredEntries().map(e=>e.id); const allSelected=ids.length&&ids.every(x=>selectedIds.has(x)); ids.forEach(x=>allSelected?selectedIds.delete(x):selectedIds.add(x)); renderLogs(); }
+  function markSelected(delivered){
+    if(!selectedIds.size)return;
+    const stamp=nowISO(); entries=entries.map(e=>selectedIds.has(e.id)?{...e,delivered,deliveredAt:delivered?stamp:null,updatedAt:stamp}:e); saveEntries(); selectedIds.clear(); renderAll(); toast(delivered?'Selected entries marked delivered.':'Selected entries returned to room.');
+  }
+
+  function openEntry(quality, existing=null){
+    selectedWorkerNum=existing?.workerNum||null;
+    $('editingId').value=existing?.id||''; $('modalQuality').value=quality; $('fullCount').value=existing?.fullCount||0; $('halfCount').value=existing?.halfCount||0; $('foamBox').checked=Boolean(existing?.foamBox); $('modalWorker').value=selectedWorkerNum||'';
+    $('modalModeLabel').textContent=existing?'Edit production':'New production · today'; $('modalTitle').textContent=`${existing?'Edit':'Add'} ${quality}`; $('saveEntryBtn').textContent=existing?'Save changes':'Save production';
+    renderWorkerChips(); $('entryModal').classList.add('open'); setTimeout(()=>$('fullCount').focus(),80);
+  }
+  function closeEntry(){ $('entryModal').classList.remove('open'); selectedWorkerNum=null; }
+  function renderWorkerChips(){
+    let html=`<button type="button" class="worker-chip none ${selectedWorkerNum===null?'selected':''}" data-worker="">No worker</button>`;
+    workers.forEach(w=>{html+=`<button type="button" class="worker-chip ${selectedWorkerNum===w.number?'selected':''}" data-worker="${w.number}"><span class="num">#${w.number}</span><span class="name">${escapeHtml(w.name)}</span></button>`;});
+    $('workerChips').innerHTML=html; document.querySelectorAll('.worker-chip').forEach(btn=>btn.addEventListener('click',()=>{ selectedWorkerNum=btn.dataset.worker===''?null:parseInt(btn.dataset.worker,10); $('modalWorker').value=selectedWorkerNum||''; renderWorkerChips(); }));
+  }
+  function submitEntry(ev){
+    ev.preventDefault(); const full=safeInt($('fullCount').value),half=safeInt($('halfCount').value); if(!full&&!half){toast('Enter at least one full or half box.');return;}
+    const editId=$('editingId').value; const existing=entries.find(e=>e.id===editId); const stamp=nowISO();
+    if(existing){ Object.assign(existing,{quality:$('modalQuality').value,fullCount:full,halfCount:half,workerNum:selectedWorkerNum,foamBox:$('foamBox').checked,updatedAt:stamp}); toast('Entry updated.'); }
+    else entries.push({id:id(),date:localDateISO(),quality:$('modalQuality').value,fullCount:full,halfCount:half,workerNum:selectedWorkerNum,foamBox:$('foamBox').checked,delivered:false,deliveredAt:null,createdAt:stamp,updatedAt:stamp});
+    saveEntries(); closeEntry(); renderAll(); if(!existing)toast('Production saved.');
+  }
+  function editEntry(id){ const e=entries.find(x=>x.id===id); if(e)openEntry(e.quality,e); }
+  function deleteEntry(id){ const e=entries.find(x=>x.id===id); if(!e)return; if(confirm(`Delete this ${e.quality} entry (${e.fullCount} full, ${e.halfCount} half)?`)){ entries=entries.filter(x=>x.id!==id); selectedIds.delete(id); saveEntries(); renderAll(); toast('Entry deleted.'); } }
+
+  function renderWorkers(){
+    $('workerCount').textContent=`${workers.length} of ${MAX_WORKERS} workers`;
+    $('workerList').innerHTML=workers.map(w=>`<div class="worker-row"><div class="worker-num">#${w.number}</div><div class="worker-name">${escapeHtml(w.name)}</div><button class="edit-worker" data-num="${w.number}">Edit</button></div>`).join('');
+    document.querySelectorAll('.edit-worker').forEach(btn=>btn.addEventListener('click',()=>showWorkerForm(parseInt(btn.dataset.num,10))));
+  }
+  function showWorkerForm(num=null){
+    editingWorkerOriginalNumber=num; const w=num!==null?getWorker(num):null; $('workerNumber').value=w?.number||''; $('workerName').value=w?.name||''; $('workerForm').classList.add('show'); $('workerNumber').focus();
+  }
+  function hideWorkerForm(){ editingWorkerOriginalNumber=null; $('workerForm').classList.remove('show'); $('workerNumber').value='';$('workerName').value=''; }
+  function saveWorker(){
+    const num=parseInt($('workerNumber').value,10),name=$('workerName').value.trim(); if(!Number.isFinite(num)||num<1){toast('Enter a valid worker number.');return;} if(!name){toast('Enter the worker name.');return;}
+    const collision=workers.some(w=>w.number===num&&w.number!==editingWorkerOriginalNumber); if(collision){toast(`Worker #${num} already exists.`);return;}
+    if(editingWorkerOriginalNumber===null && workers.length>=MAX_WORKERS){toast(`Maximum ${MAX_WORKERS} workers.`);return;}
+    if(editingWorkerOriginalNumber!==null){ const w=getWorker(editingWorkerOriginalNumber); if(w){ const old=w.number; w.number=num; w.name=name; if(old!==num) entries.forEach(e=>{if(e.workerNum===old)e.workerNum=num;}); saveEntries(); }} else workers.push({number:num,name});
+    workers.sort((a,b)=>a.number-b.number); saveWorkers(); hideWorkerForm(); renderAll(); toast('Worker saved.');
+  }
+
+  function copyReport(){
+    const all=todayEntries(),display=dashboardMode==='room'?all.filter(e=>!e.delivered):all,c=counts(display),bc={full:c.B.full+c.MB.full,half:c.B.half+c.MB.half};
+    const heading=dashboardMode==='room'?'Transmission room':'Total production';
+    const lines=[`${heading} — ${prettyDate(localDateISO())}`,`B (B + MB): ${bc.full} full and ${bc.half} half`,`B+: ${c['B+'].full} full and ${c['B+'].half} half`,`C+: ${c['C+'].full} full and ${c['C+'].half} half`,`BS: ${c.BS.full} full and ${c.BS.half} half`,`Details — B: ${c.B.full} full / ${c.B.half} half; MB: ${c.MB.full} full / ${c.MB.half} half`];
+    const text=lines.join('\n');
+    if(navigator.clipboard?.writeText){navigator.clipboard.writeText(text).then(()=>toast('Report copied.')).catch(()=>fallbackCopy(text));} else fallbackCopy(text);
+  }
+  function fallbackCopy(text){ const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Report copied.'); }
+
+  function exportCsv(){
+    const header=['date','created_at','quality','full_boxes','half_boxes','worker_number','worker_name','foam_box','status','delivered_at'];
+    const rows=entries.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(e=>{const w=getWorker(e.workerNum);return [e.date,e.createdAt,e.quality,e.fullCount,e.halfCount,e.workerNum||'',w?.name||'',e.foamBox?'yes':'no',e.delivered?'delivered':'in_room',e.deliveredAt||''];});
+    const esc=v=>`"${String(v??'').replaceAll('"','""')}"`; download(`salmon-production-${localDateISO()}.csv`,[header,...rows].map(r=>r.map(esc).join(',')).join('\n'),'text/csv;charset=utf-8');
+  }
+  function exportJson(){ download(`salmon-backup-${localDateISO()}.json`,JSON.stringify({version:6,exportedAt:nowISO(),entries,workers},null,2),'application/json'); }
+  function download(name,text,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000); }
+  function importJson(file){
+    const reader=new FileReader(); reader.onload=()=>{ try{ const data=JSON.parse(reader.result); const importedEntries=Array.isArray(data)?data:(data.entries||[]); const importedWorkers=Array.isArray(data.workers)?data.workers:null; if(!Array.isArray(importedEntries))throw new Error('No entries'); if(!confirm(`Restore ${importedEntries.length} production entries? This will replace the current production log.`))return; entries=importedEntries.map(normalizeEntry); if(importedWorkers?.length)workers=importedWorkers.map(w=>({number:parseInt(w.number,10),name:String(w.name||'').trim()})).filter(w=>Number.isFinite(w.number)&&w.name).slice(0,MAX_WORKERS).sort((a,b)=>a.number-b.number); saveEntries();saveWorkers();selectedIds.clear();renderAll();toast('Backup restored.'); }catch(e){alert('That file is not a valid Salmon Tracker backup.');} finally{$('importFile').value='';} }; reader.readAsText(file);
+  }
+
+  function escapeHtml(s){ return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+
+  function renderAll(){ renderHeader(); renderQualityGrid(); renderRecent(); renderDashboard(); renderFilters(); renderLogs(); renderWorkers(); }
+
+  function bind(){
+    document.querySelectorAll('.bottom-nav button').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b===btn)); document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); $(`tab-${btn.dataset.tab}`).classList.add('active'); if(btn.dataset.tab==='dashboard')renderDashboard(); if(btn.dataset.tab==='logs')renderLogs(); }));
+    $('dashboardMode').addEventListener('click',e=>{const b=e.target.closest('button[data-mode]');if(!b)return;dashboardMode=b.dataset.mode;document.querySelectorAll('#dashboardMode button').forEach(x=>x.classList.toggle('active',x===b));renderDashboard();});
+    $('entryForm').addEventListener('submit',submitEntry); $('closeModalBtn').addEventListener('click',closeEntry); $('cancelEntryBtn').addEventListener('click',closeEntry); $('entryModal').addEventListener('click',e=>{if(e.target===$('entryModal'))closeEntry();});
+    ['filterRange','filterWorker','filterQuality','filterStatus','filterFrom','filterTo'].forEach(id=>$(id).addEventListener('change',()=>{ if(id==='filterRange')renderFilters(); selectedIds.clear();renderLogs(); }));
+    $('selectAllBtn').addEventListener('click',selectVisible); $('clearSelectionBtn').addEventListener('click',()=>{selectedIds.clear();renderLogs();}); $('markDeliveredBtn').addEventListener('click',()=>markSelected(true)); $('markRoomBtn').addEventListener('click',()=>markSelected(false));
+    $('clearFiltersBtn').addEventListener('click',()=>{$('filterRange').value='today';$('filterWorker').value='all';$('filterQuality').value='all';$('filterStatus').value='all';$('filterFrom').value='';$('filterTo').value='';selectedIds.clear();renderFilters();renderLogs();});
+    $('copyReportBtn').addEventListener('click',copyReport);
+    $('addWorkerBtn').addEventListener('click',()=>showWorkerForm(null)); $('cancelWorkerBtn').addEventListener('click',hideWorkerForm); $('saveWorkerBtn').addEventListener('click',saveWorker);
+    $('exportCsvBtn').addEventListener('click',exportCsv); $('exportJsonBtn').addEventListener('click',exportJson); $('importJsonBtn').addEventListener('click',()=>$('importFile').click()); $('importFile').addEventListener('change',()=>{if($('importFile').files[0])importJson($('importFile').files[0]);});
+    $('clearEntriesBtn').addEventListener('click',()=>{if(confirm('Delete ALL production entries from this device? Worker names will stay.')){entries=[];selectedIds.clear();saveEntries();renderAll();toast('Production log cleared.');}});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('entryModal').classList.contains('open'))closeEntry();});
+  }
+
+  entries=loadEntries(); workers=loadWorkers(); saveEntries(); saveWorkers(); bind(); renderAll();
+})();
+</script>
 </body>
 </html>
