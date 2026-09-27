@@ -8,413 +8,5046 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Salmon Count" />
   <title>Salmon Production Counter</title>
+
   <style>
     :root {
-      --bg:#f4f7f6; --card:#fff; --text:#172321; --muted:#66736f; --line:#dfe7e4;
-      --brand:#0f766e; --brand2:#115e59; --brand-soft:#e6f4f2; --danger:#b42318;
-      --danger-soft:#fff0ee; --warning:#9a6700; --warning-soft:#fff7db; --ok:#18794e;
-      --ok-soft:#eaf7ef; --shadow:0 8px 28px rgba(20,51,46,.08); --r:18px;
+      --bg:#f4f7f6;
+      --card:#fff;
+      --text:#172321;
+      --muted:#66736f;
+      --line:#dfe7e4;
+
+      --brand:#0f766e;
+      --brand2:#115e59;
+      --brand-soft:#e6f4f2;
+
+      --danger:#b42318;
+      --danger-soft:#fff0ee;
+
+      --warning:#9a6700;
+      --warning-soft:#fff7db;
+
+      --ok:#18794e;
+      --ok-soft:#eaf7ef;
+
+      --shadow:0 8px 28px rgba(20,51,46,.08);
+      --r:18px;
     }
-    *{box-sizing:border-box}
-    html{-webkit-text-size-adjust:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom));}
-    button,input,select{font:inherit}
-    button{touch-action:manipulation}
-    .app{max-width:760px;margin:0 auto;padding:14px 12px 28px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-    .brand h1{font-size:22px;margin:0;letter-spacing:-.35px}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
-    .today-pill{white-space:nowrap;background:var(--brand-soft);color:var(--brand2);font-weight:800;font-size:12px;padding:8px 10px;border-radius:999px}
-    .tab{display:none}.tab.active{display:block}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
-    .section{padding:16px;margin-bottom:12px}.section h2{margin:0 0 5px;font-size:18px}.section .hint{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}
-    .quality-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .quality-btn{border:1px solid var(--line);background:#fff;border-radius:16px;min-height:126px;padding:13px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;box-shadow:0 3px 12px rgba(20,51,46,.05);color:var(--text)}
-    .quality-btn:active{transform:scale(.975)}.quality-btn .q{font-size:28px;font-weight:900;letter-spacing:-.4px}.quality-btn .counts{font-size:14px;font-weight:800;margin-top:7px}.quality-btn .sub{font-size:11px;color:var(--muted);margin-top:3px}.quality-btn .badge{position:absolute;top:8px;right:8px;font-size:10px;color:var(--brand2);background:var(--brand-soft);padding:3px 7px;border-radius:999px;font-weight:800}
-    .quality-btn[data-quality="B"]{border-top:4px solid #2563eb}.quality-btn[data-quality="B+"]{border-top:4px solid #7c3aed}.quality-btn[data-quality="C+"]{border-top:4px solid #16a34a}.quality-btn[data-quality="BS"]{border-top:4px solid #d97706}.quality-btn[data-quality="MB"]{border-top:4px solid #dc2626}
-    .quick-help{display:flex;gap:8px;align-items:flex-start;background:#eef7f6;border-radius:14px;padding:12px;margin-top:12px;font-size:12.5px;color:#38514d;line-height:1.4}
-    .recent-list{display:grid;gap:8px}.recent-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:10px;margin-top:2px}.recent-row:first-child{border-top:0;padding-top:0}.recent-main{min-width:0}.recent-main strong{font-size:14px}.recent-main small{display:block;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recent-count{font-weight:900;white-space:nowrap}
-    .seg{display:grid;grid-template-columns:1fr 1fr;background:#edf2f0;border-radius:12px;padding:3px;gap:3px}.seg button{border:0;background:transparent;border-radius:10px;padding:10px 9px;font-weight:800;color:#52625e}.seg button.active{background:#fff;color:var(--brand2);box-shadow:0 2px 8px rgba(20,51,46,.08)}
-    .status-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.stat{background:#f7faf9;border:1px solid var(--line);border-radius:14px;padding:11px;text-align:center}.stat b{font-size:16px;display:block}.stat span{font-size:11px;color:var(--muted)}
-    .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.report-card{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}.report-card.hero{grid-column:1/-1;background:linear-gradient(135deg,#e8f6f4,#fff);border-color:#b9ddd8}.report-card .label{font-size:12px;color:var(--muted);font-weight:800}.report-card .big{font-size:21px;font-weight:900;margin-top:4px}.report-card .tiny{font-size:11px;color:var(--muted);margin-top:4px}.report-card .formula{display:inline-block;margin-top:7px;font-size:11px;font-weight:800;color:var(--brand2);background:var(--brand-soft);padding:4px 8px;border-radius:999px}
-    .primary,.secondary,.danger{border-radius:12px;padding:11px 14px;font-weight:800;border:1px solid transparent}.primary{background:var(--brand);color:#fff}.primary:active{background:var(--brand2)}.secondary{background:#fff;border-color:var(--line);color:var(--text)}.danger{background:var(--danger-soft);border-color:#f5c1ba;color:var(--danger)}.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn-row>*{flex:1;min-width:120px}
-    .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:11px;color:var(--muted);font-weight:800}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px 10px;color:var(--text);min-height:44px}.field.full{grid-column:1/-1}.custom-dates{display:none;grid-column:1/-1;grid-template-columns:1fr 1fr;gap:8px}.custom-dates.show{display:grid}
-    .summary-line{margin-top:12px;padding:11px 12px;border-radius:13px;background:#f7faf9;border:1px solid var(--line);font-size:13px;font-weight:800}.summary-line span{color:var(--brand2)}
-    .batchbar{position:sticky;top:8px;z-index:5;display:none;align-items:center;gap:7px;background:#163b37;color:#fff;padding:9px;border-radius:14px;margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.15)}.batchbar.show{display:flex}.batchbar .n{font-size:12px;font-weight:900;margin-right:auto;padding-left:4px}.batchbar button{border:0;border-radius:10px;padding:9px 10px;font-weight:800}.batchbar .deliver{background:#fff;color:#163b37}.batchbar .undo{background:#d8eee9;color:#163b37}.batchbar .clear{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3)}
-    .log-list{display:grid;gap:9px;margin-top:10px}.log-card{border:1px solid var(--line);border-radius:15px;background:#fff;padding:12px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start}.log-card.selected{outline:2px solid var(--brand);background:#f8fffd}.selectbox{width:22px;height:22px;accent-color:var(--brand);margin-top:2px}.log-q{font-size:16px;font-weight:900}.log-meta{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}.log-count{font-size:14px;font-weight:900;text-align:right}.pill{display:inline-flex;align-items:center;font-size:10px;font-weight:900;padding:4px 7px;border-radius:999px;margin-top:5px}.pill.room{background:var(--warning-soft);color:var(--warning)}.pill.delivered{background:var(--ok-soft);color:var(--ok)}.pill.foam{background:#eef2ff;color:#4338ca;margin-left:4px}.log-actions{grid-column:2/4;display:flex;gap:6px;justify-content:flex-end}.iconbtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px}.empty{text-align:center;color:var(--muted);padding:24px 10px;font-size:13px}
-    .people-summary{display:grid;gap:8px;margin-top:10px}.person-card{border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:#fff}.person-top{display:flex;justify-content:space-between;gap:10px;font-weight:900}.person-detail{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
-    .worker-list{display:grid;gap:8px}.worker-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px 11px;background:#fff}.worker-num{width:42px;height:42px;border-radius:12px;background:var(--brand-soft);display:grid;place-items:center;font-weight:900;color:var(--brand2);font-size:16px}.worker-name{font-size:16px;font-weight:850;flex:1}.worker-row button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px}
-    .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings-grid button{min-height:46px}.danger-zone{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
-    .bottom-nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);z-index:20}.bottom-nav button{border:0;background:transparent;color:#71807c;font-size:11px;font-weight:800;padding:6px 3px;border-radius:12px}.bottom-nav button .ico{display:block;font-size:21px;line-height:1.1;margin-bottom:3px}.bottom-nav button.active{color:var(--brand2);background:var(--brand-soft)}
-    .modal{position:fixed;inset:0;background:rgba(8,24,22,.48);display:none;align-items:flex-end;z-index:50}.modal.open{display:flex}.sheet{width:100%;max-width:760px;margin:0 auto;background:#fff;border-radius:22px 22px 0 0;padding:13px 14px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;box-shadow:0 -12px 36px rgba(0,0,0,.18)}.sheet-handle{width:44px;height:5px;background:#d8dfdd;border-radius:999px;margin:0 auto 12px}.sheet-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.sheet-head h3{margin:0;font-size:20px}.closebtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:20px}.count-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.countbox label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px}.countbox input{width:100%;font-size:30px;font-weight:900;text-align:center;border:1px solid var(--line);border-radius:14px;padding:12px 6px;min-height:66px}.worker-label{font-size:12px;color:var(--muted);font-weight:800;margin:12px 0 7px}.worker-chips{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.worker-chip{border:1px solid var(--line);border-radius:14px;background:#fff;padding:10px;min-height:58px;text-align:left}.worker-chip.selected{border-color:var(--brand);background:var(--brand-soft);box-shadow:inset 0 0 0 1px var(--brand)}.worker-chip .num{font-weight:950;font-size:18px;display:inline-block;margin-right:6px}.worker-chip .name{font-size:15px;font-weight:800}.worker-chip.none{grid-column:1/-1;text-align:center;min-height:44px}.checkline{display:flex;align-items:center;gap:10px;margin:13px 0;padding:11px;border:1px solid var(--line);border-radius:13px;background:#fafcfc}.checkline input{width:22px;height:22px;accent-color:var(--brand)}.checkline b{display:block}.checkline small{display:block;color:var(--muted);margin-top:2px}
-    .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#153632;color:#fff;padding:10px 14px;border-radius:999px;font-size:13px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:100;max-width:90%;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
-    .modal-form-actions{display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:12px}.modal-form-actions button{min-height:48px}
-    .edit-worker-form{display:none;margin:10px 0;padding:12px;border:1px solid var(--line);border-radius:14px;background:#f9fbfa}.edit-worker-form.show{display:block}.edit-worker-form .row{display:grid;grid-template-columns:90px 1fr;gap:8px}.edit-worker-form input{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px;min-height:44px}
-    .note{font-size:12px;color:var(--muted);line-height:1.45}
-    @media (max-width:390px){.quality-grid{gap:7px}.quality-btn{min-height:112px}.quality-btn .q{font-size:25px}.report-grid{grid-template-columns:1fr}.report-card.hero{grid-column:auto}.status-strip{grid-template-columns:1fr}.worker-chips{grid-template-columns:1fr 1fr}}
+
+    * {
+      box-sizing:border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust:100%;
+    }
+
+    body {
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      padding-bottom:calc(84px + env(safe-area-inset-bottom));
+    }
+
+    button,input,select {
+      font:inherit;
+    }
+
+    button {
+      touch-action:manipulation;
+    }
+
+    .app {
+      max-width:760px;
+      margin:0 auto;
+      padding:14px 12px 28px;
+    }
+
+    .topbar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .brand h1 {
+      font-size:22px;
+      margin:0;
+      letter-spacing:-.35px;
+    }
+
+    .brand p {
+      margin:3px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .today-pill {
+      white-space:nowrap;
+      background:var(--brand-soft);
+      color:var(--brand2);
+      font-weight:800;
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+    }
+
+    .tab {
+      display:none;
+    }
+
+    .tab.active {
+      display:block;
+    }
+
+    .card {
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+    }
+
+    .section {
+      padding:16px;
+      margin-bottom:12px;
+    }
+
+    .section h2 {
+      margin:0 0 5px;
+      font-size:18px;
+    }
+
+    .section .hint {
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .quality-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+
+    .quality-btn {
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+      min-height:126px;
+      padding:13px 8px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      box-shadow:0 3px 12px rgba(20,51,46,.05);
+      color:var(--text);
+    }
+
+    .quality-btn:active {
+      transform:scale(.975);
+    }
+
+    .quality-btn .q {
+      font-size:28px;
+      font-weight:900;
+      letter-spacing:-.4px;
+    }
+
+    .quality-btn .counts {
+      font-size:14px;
+      font-weight:800;
+      margin-top:7px;
+    }
+
+    .quality-btn .sub {
+      font-size:11px;
+      color:var(--muted);
+      margin-top:3px;
+    }
+
+    .quality-btn .badge {
+      position:absolute;
+      top:8px;
+      right:8px;
+      font-size:10px;
+      color:var(--brand2);
+      background:var(--brand-soft);
+      padding:3px 7px;
+      border-radius:999px;
+      font-weight:800;
+    }
+
+    .quality-btn[data-quality="B"] {
+      border-top:4px solid #2563eb;
+    }
+
+    .quality-btn[data-quality="B+"] {
+      border-top:4px solid #7c3aed;
+    }
+
+    .quality-btn[data-quality="C+"] {
+      border-top:4px solid #16a34a;
+    }
+
+    .quality-btn[data-quality="BS"] {
+      border-top:4px solid #d97706;
+    }
+
+    .quality-btn[data-quality="MB"] {
+      border-top:4px solid #dc2626;
+    }
+
+    .quick-help {
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+      background:#eef7f6;
+      border-radius:14px;
+      padding:12px;
+      margin-top:12px;
+      font-size:12.5px;
+      color:#38514d;
+      line-height:1.4;
+    }
+
+    .recent-list {
+      display:grid;
+      gap:8px;
+    }
+
+    .recent-row {
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:center;
+      gap:8px 10px;
+      border-top:1px solid var(--line);
+      padding-top:10px;
+      margin-top:2px;
+    }
+
+    .recent-row:first-child {
+      border-top:0;
+      padding-top:0;
+    }
+
+    .recent-main {
+      min-width:0;
+    }
+
+    .recent-main strong {
+      font-size:14px;
+    }
+
+    .recent-main small {
+      display:block;
+      color:var(--muted);
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .recent-count {
+      font-weight:900;
+      white-space:nowrap;
+      text-align:right;
+    }
+
+    .recent-actions {
+      grid-column:1/3;
+      display:flex;
+      gap:7px;
+      justify-content:flex-end;
+    }
+
+    .mini-action {
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:10px;
+      padding:7px 10px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .mini-action.status-room {
+      background:var(--ok-soft);
+      color:var(--ok);
+      border-color:#b7e2d6;
+    }
+
+    .mini-action.status-delivered {
+      background:var(--warning-soft);
+      color:var(--warning);
+      border-color:#f1d7a2;
+    }
+
+    .seg {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      background:#edf2f0;
+      border-radius:12px;
+      padding:3px;
+      gap:3px;
+    }
+
+    .seg button {
+      border:0;
+      background:transparent;
+      border-radius:10px;
+      padding:10px 9px;
+      font-weight:800;
+      color:#52625e;
+    }
+
+    .seg button.active {
+      background:#fff;
+      color:var(--brand2);
+      box-shadow:0 2px 8px rgba(20,51,46,.08);
+    }
+
+    .status-strip {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      margin:12px 0;
+    }
+
+    .stat {
+      background:#f7faf9;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px;
+      text-align:center;
+    }
+
+    .stat b {
+      font-size:16px;
+      display:block;
+    }
+
+    .stat span {
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .report-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .report-card {
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#fff;
+    }
+
+    .report-card.hero {
+      grid-column:1/-1;
+      background:linear-gradient(135deg,#e8f6f4,#fff);
+      border-color:#b9ddd8;
+    }
+
+    .report-card .label {
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    .report-card .big {
+      font-size:21px;
+      font-weight:900;
+      margin-top:4px;
+    }
+
+    .report-card .tiny {
+      font-size:11px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+
+    .report-card .formula {
+      display:inline-block;
+      margin-top:7px;
+      font-size:11px;
+      font-weight:800;
+      color:var(--brand2);
+      background:var(--brand-soft);
+      padding:4px 8px;
+      border-radius:999px;
+    }
+
+    .primary,
+    .secondary,
+    .danger {
+      border-radius:12px;
+      padding:11px 14px;
+      font-weight:800;
+      border:1px solid transparent;
+    }
+
+    .primary {
+      background:var(--brand);
+      color:#fff;
+    }
+
+    .primary:active {
+      background:var(--brand2);
+    }
+
+    .secondary {
+      background:#fff;
+      border-color:var(--line);
+      color:var(--text);
+    }
+
+    .danger {
+      background:var(--danger-soft);
+      border-color:#f5c1ba;
+      color:var(--danger);
+    }
+
+    .btn-row {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .btn-row>* {
+      flex:1;
+      min-width:120px;
+    }
+
+    .filters {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+    .field {
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+    }
+
+    .field label {
+      font-size:11px;
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    .field input,
+    .field select {
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      padding:11px 10px;
+      color:var(--text);
+      min-height:44px;
+    }
+
+    .field.full {
+      grid-column:1/-1;
+    }
+
+    .custom-dates {
+      display:none;
+      grid-column:1/-1;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+    .custom-dates.show {
+      display:grid;
+    }
+
+    .summary-line {
+      margin-top:12px;
+      padding:11px 12px;
+      border-radius:13px;
+      background:#f7faf9;
+      border:1px solid var(--line);
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .summary-line span {
+      color:var(--brand2);
+    }
+
+    .batchbar {
+      position:sticky;
+      top:8px;
+      z-index:5;
+      display:none;
+      align-items:center;
+      gap:7px;
+      background:#163b37;
+      color:#fff;
+      padding:9px;
+      border-radius:14px;
+      margin:10px 0;
+      box-shadow:0 8px 24px rgba(0,0,0,.15);
+    }
+
+    .batchbar.show {
+      display:flex;
+    }
+
+    .batchbar .n {
+      font-size:12px;
+      font-weight:900;
+      margin-right:auto;
+      padding-left:4px;
+    }
+
+    .batchbar button {
+      border:0;
+      border-radius:10px;
+      padding:9px 10px;
+      font-weight:800;
+    }
+
+    .batchbar .deliver {
+      background:#fff;
+      color:#163b37;
+    }
+
+    .batchbar .undo {
+      background:#d8eee9;
+      color:#163b37;
+    }
+
+    .batchbar .clear {
+      background:transparent;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.3);
+    }
+
+    .log-list {
+      display:grid;
+      gap:9px;
+      margin-top:10px;
+    }
+
+    .log-card {
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#fff;
+      padding:12px;
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:10px;
+      align-items:start;
+    }
+
+    .log-card.selected {
+      outline:2px solid var(--brand);
+      background:#f8fffd;
+    }
+
+    .selectbox {
+      width:22px;
+      height:22px;
+      accent-color:var(--brand);
+      margin-top:2px;
+    }
+
+    .log-q {
+      font-size:16px;
+      font-weight:900;
+    }
+
+    .log-meta {
+      font-size:12px;
+      color:var(--muted);
+      margin-top:3px;
+      line-height:1.45;
+    }
+
+    .log-count {
+      font-size:14px;
+      font-weight:900;
+      text-align:right;
+    }
+
+    .pill {
+      display:inline-flex;
+      align-items:center;
+      font-size:10px;
+      font-weight:900;
+      padding:4px 7px;
+      border-radius:999px;
+      margin-top:5px;
+    }
+
+    .pill.room {
+      background:var(--warning-soft);
+      color:var(--warning);
+    }
+
+    .pill.delivered {
+      background:var(--ok-soft);
+      color:var(--ok);
+    }
+
+    .pill.foam {
+      background:#eef2ff;
+      color:#4338ca;
+      margin-left:4px;
+    }
+
+    .log-actions {
+      grid-column:2/4;
+      display:flex;
+      gap:6px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+
+    .iconbtn {
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:10px;
+      padding:8px 10px;
+      font-weight:800;
+    }
+
+    .iconbtn.status-to-delivered {
+      background:var(--ok-soft);
+      color:var(--ok);
+      border-color:#b7e2d6;
+    }
+
+    .iconbtn.status-to-room {
+      background:var(--warning-soft);
+      color:var(--warning);
+      border-color:#f1d7a2;
+    }
+
+    .empty {
+      text-align:center;
+      color:var(--muted);
+      padding:24px 10px;
+      font-size:13px;
+    }
+
+    .people-summary {
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .person-card {
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px 12px;
+      background:#fff;
+    }
+
+    .person-top {
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-weight:900;
+    }
+
+    .person-detail {
+      font-size:12px;
+      color:var(--muted);
+      margin-top:5px;
+      line-height:1.5;
+    }
+
+    .worker-list {
+      display:grid;
+      gap:8px;
+    }
+
+    .worker-row {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 11px;
+      background:#fff;
+    }
+
+    .worker-num {
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      background:var(--brand-soft);
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      color:var(--brand2);
+      font-size:16px;
+    }
+
+    .worker-name {
+      font-size:16px;
+      font-weight:850;
+      flex:1;
+    }
+
+    .worker-row button {
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:10px;
+      padding:8px;
+    }
+
+    .settings-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+    .settings-grid button {
+      min-height:46px;
+    }
+
+    .bottom-nav {
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(255,255,255,.97);
+      backdrop-filter:blur(12px);
+      border-top:1px solid var(--line);
+      padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      z-index:20;
+    }
+
+    .bottom-nav button {
+      border:0;
+      background:transparent;
+      color:#71807c;
+      font-size:11px;
+      font-weight:800;
+      padding:6px 3px;
+      border-radius:12px;
+    }
+
+    .bottom-nav button .ico {
+      display:block;
+      font-size:21px;
+      line-height:1.1;
+      margin-bottom:3px;
+    }
+
+    .bottom-nav button.active {
+      color:var(--brand2);
+      background:var(--brand-soft);
+    }
+
+    .modal {
+      position:fixed;
+      inset:0;
+      background:rgba(8,24,22,.48);
+      display:none;
+      align-items:flex-end;
+      z-index:50;
+    }
+
+    .modal.open {
+      display:flex;
+    }
+
+    .sheet {
+      width:100%;
+      max-width:760px;
+      margin:0 auto;
+      background:#fff;
+      border-radius:22px 22px 0 0;
+      padding:13px 14px calc(18px + env(safe-area-inset-bottom));
+      max-height:92vh;
+      overflow:auto;
+      box-shadow:0 -12px 36px rgba(0,0,0,.18);
+    }
+
+    .sheet-handle {
+      width:44px;
+      height:5px;
+      background:#d8dfdd;
+      border-radius:999px;
+      margin:0 auto 12px;
+    }
+
+    .sheet-head {
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+
+    .sheet-head h3 {
+      margin:0;
+      font-size:20px;
+    }
+
+    .closebtn {
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:20px;
+    }
+
+    .count-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin:14px 0;
+    }
+
+    .countbox label {
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .countbox input {
+      width:100%;
+      font-size:30px;
+      font-weight:900;
+      text-align:center;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 6px;
+      min-height:66px;
+    }
+
+    .worker-label {
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+      margin:12px 0 7px;
+    }
+
+    .worker-chips {
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:8px;
+    }
+
+    .worker-chip {
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:10px;
+      min-height:58px;
+      text-align:left;
+    }
+
+    .worker-chip.selected {
+      border-color:var(--brand);
+      background:var(--brand-soft);
+      box-shadow:inset 0 0 0 1px var(--brand);
+    }
+
+    .worker-chip .num {
+      font-weight:950;
+      font-size:18px;
+      display:inline-block;
+      margin-right:6px;
+    }
+
+    .worker-chip .name {
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .worker-chip.none {
+      grid-column:1/-1;
+      text-align:center;
+      min-height:44px;
+    }
+
+    .checkline {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:13px 0;
+      padding:11px;
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:#fafcfc;
+    }
+
+    .checkline input {
+      width:22px;
+      height:22px;
+      accent-color:var(--brand);
+    }
+
+    .checkline b {
+      display:block;
+    }
+
+    .checkline small {
+      display:block;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    .toast {
+      position:fixed;
+      left:50%;
+      bottom:calc(86px + env(safe-area-inset-bottom));
+      transform:translate(-50%,20px);
+      background:#153632;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      opacity:0;
+      pointer-events:none;
+      transition:.2s;
+      z-index:100;
+      max-width:90%;
+      text-align:center;
+    }
+
+    .toast.show {
+      opacity:1;
+      transform:translate(-50%,0);
+    }
+
+    .modal-form-actions {
+      display:grid;
+      grid-template-columns:1fr 2fr;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .modal-form-actions button {
+      min-height:48px;
+    }
+
+    .edit-worker-form {
+      display:none;
+      margin:10px 0;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#f9fbfa;
+    }
+
+    .edit-worker-form.show {
+      display:block;
+    }
+
+    .edit-worker-form .row {
+      display:grid;
+      grid-template-columns:90px 1fr;
+      gap:8px;
+    }
+
+    .edit-worker-form input {
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:11px;
+      padding:10px;
+      min-height:44px;
+    }
+
+    .note {
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    @media (max-width:390px) {
+      .quality-grid {
+        gap:7px;
+      }
+
+      .quality-btn {
+        min-height:112px;
+      }
+
+      .quality-btn .q {
+        font-size:25px;
+      }
+
+      .report-grid {
+        grid-template-columns:1fr;
+      }
+
+      .report-card.hero {
+        grid-column:auto;
+      }
+
+      .status-strip {
+        grid-template-columns:1fr;
+      }
+
+      .worker-chips {
+        grid-template-columns:1fr 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <div class="topbar">
-      <div class="brand"><h1>Salmon Production</h1><p>Fast count · separate full & half boxes</p></div>
-      <div class="today-pill" id="todayPill">Today</div>
+
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <h1>Salmon Production</h1>
+      <p>Fast count · separate full & half boxes</p>
     </div>
 
-    <main>
-      <section class="tab active" id="tab-entry">
-        <div class="card section">
-          <h2>Quick entry</h2>
-          <p class="hint">Tap a quality. Enter full boxes and half boxes together. New production always starts as <b>in the transmission room</b>.</p>
-          <div class="quality-grid" id="qualityGrid"></div>
-          <div class="quick-help"><span>💡</span><div>The numbers on these buttons are <b>today's production</b>. A half box stays a half box; it is never converted into 0.5 of a full box.</div></div>
-        </div>
-        <div class="card section">
-          <h2>Latest today</h2>
-          <p class="hint">Your newest entries, so you can quickly check that the count was recorded correctly.</p>
-          <div class="recent-list" id="recentList"></div>
-        </div>
-      </section>
-
-      <section class="tab" id="tab-dashboard">
-        <div class="card section">
-          <h2>Today's dashboard</h2>
-          <p class="hint">Switch between what is physically in the transmission room and everything produced today.</p>
-          <div class="seg" id="dashboardMode">
-            <button class="active" data-mode="room">In room · exclude delivered</button>
-            <button data-mode="all">All produced · include delivered</button>
-          </div>
-          <div class="status-strip" id="statusStrip"></div>
-          <div class="report-grid" id="reportGrid"></div>
-          <div class="btn-row"><button class="primary" id="copyReportBtn">Copy today's report</button></div>
-          <p class="note" style="margin:10px 0 0">For the reporting total called <b>B</b>, this tool calculates <b>B + MB</b>. B and MB are still shown separately underneath.</p>
-        </div>
-      </section>
-
-      <section class="tab" id="tab-logs">
-        <div class="card section">
-          <h2>Logs & delivery</h2>
-          <p class="hint">Filter entries, select the batches that left the room, then mark them delivered together.</p>
-          <div class="filters">
-            <div class="field"><label>Date range</label><select id="filterRange"><option value="today">Today</option><option value="week">This week</option><option value="all">All dates</option><option value="custom">Custom</option></select></div>
-            <div class="field"><label>Worker</label><select id="filterWorker"></select></div>
-            <div class="field"><label>Quality</label><select id="filterQuality"><option value="all">All qualities</option><option>B</option><option>B+</option><option>C+</option><option>BS</option><option>MB</option></select></div>
-            <div class="field"><label>Status</label><select id="filterStatus"><option value="all">All status</option><option value="room">In room</option><option value="delivered">Delivered</option></select></div>
-            <div class="custom-dates" id="customDates"><div class="field"><label>From</label><input type="date" id="filterFrom"></div><div class="field"><label>To</label><input type="date" id="filterTo"></div></div>
-          </div>
-          <div class="summary-line" id="logSummary"></div>
-          <div class="btn-row"><button class="secondary" id="selectAllBtn">Select visible</button><button class="secondary" id="clearFiltersBtn">Reset filters</button></div>
-          <div class="batchbar" id="batchbar"><div class="n" id="batchCount">0 selected</div><button class="deliver" id="markDeliveredBtn">Delivered</button><button class="undo" id="markRoomBtn">Return</button><button class="clear" id="clearSelectionBtn">×</button></div>
-          <div class="log-list" id="logList"></div>
-        </div>
-        <div class="card section">
-          <h2>Employee summary</h2>
-          <p class="hint">Uses the same date/worker/quality filters above. Full and half remain separate.</p>
-          <div class="people-summary" id="peopleSummary"></div>
-        </div>
-      </section>
-
-      <section class="tab" id="tab-workers">
-        <div class="card section">
-          <h2>Workers</h2>
-          <p class="hint"><span id="workerCount"></span> · tap Edit to change a name or number. The entry screen only shows workers saved here.</p>
-          <div class="worker-list" id="workerList"></div>
-          <div class="edit-worker-form" id="workerForm">
-            <div class="row"><input id="workerNumber" inputmode="numeric" pattern="[0-9]*" placeholder="No."><input id="workerName" placeholder="Worker name"></div>
-            <div class="btn-row"><button class="secondary" id="cancelWorkerBtn">Cancel</button><button class="primary" id="saveWorkerBtn">Save worker</button></div>
-          </div>
-          <div class="btn-row"><button class="primary" id="addWorkerBtn">+ Add worker</button></div>
-        </div>
-        <div class="card section">
-          <h2>Data & backup</h2>
-          <p class="hint">Production is stored in this browser on this device. Export a backup occasionally, especially before clearing Safari data or changing phones.</p>
-          <div class="settings-grid"><button class="secondary" id="exportCsvBtn">Export CSV</button><button class="secondary" id="exportJsonBtn">Backup JSON</button><button class="secondary" id="importJsonBtn">Restore JSON</button><button class="danger" id="clearEntriesBtn">Clear production</button></div>
-          <input type="file" accept="application/json,.json" id="importFile" hidden>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <nav class="bottom-nav">
-    <button class="active" data-tab="entry"><span class="ico">➕</span>Entry</button>
-    <button data-tab="dashboard"><span class="ico">📊</span>Dashboard</button>
-    <button data-tab="logs"><span class="ico">📋</span>Logs</button>
-    <button data-tab="workers"><span class="ico">👥</span>Workers</button>
-  </nav>
-
-  <div class="modal" id="entryModal">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-head"><div><div class="note" id="modalModeLabel">New production</div><h3 id="modalTitle">Add B</h3></div><button class="closebtn" id="closeModalBtn">×</button></div>
-      <form id="entryForm">
-        <input type="hidden" id="modalQuality"><input type="hidden" id="modalWorker"><input type="hidden" id="editingId">
-        <div class="count-grid">
-          <div class="countbox"><label>FULL BOXES</label><input id="fullCount" type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" value="0"></div>
-          <div class="countbox"><label>HALF BOXES</label><input id="halfCount" type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" value="0"></div>
-        </div>
-        <div class="worker-label">WHO MADE IT? · OPTIONAL</div>
-        <div class="worker-chips" id="workerChips"></div>
-        <label class="checkline"><input type="checkbox" id="foamBox"><span><b>Foam box</b><small>Optional. Applies to this whole entry.</small></span></label>
-        <div class="modal-form-actions"><button type="button" class="secondary" id="cancelEntryBtn">Cancel</button><button type="submit" class="primary" id="saveEntryBtn">Save production</button></div>
-      </form>
+    <div class="today-pill" id="todayPill">
+      Today
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <main>
+
+    <!-- ENTRY -->
+    <section class="tab active" id="tab-entry">
+
+      <div class="card section">
+        <h2>Quick entry</h2>
+
+        <p class="hint">
+          Tap a quality. Enter full boxes and half boxes together.
+          New production always starts as <b>in the transmission room</b>.
+        </p>
+
+        <div class="quality-grid" id="qualityGrid"></div>
+
+        <div class="quick-help">
+          <span>💡</span>
+
+          <div>
+            The numbers on these buttons are <b>today's production</b>.
+            A half box stays a half box; it is never converted into
+            0.5 of a full box.
+          </div>
+        </div>
+      </div>
+
+      <div class="card section">
+        <h2>Latest today</h2>
+
+        <p class="hint">
+          Your newest entries, so you can quickly check that the count
+          was recorded correctly.
+        </p>
+
+        <div class="recent-list" id="recentList"></div>
+      </div>
+
+    </section>
+
+
+    <!-- DASHBOARD -->
+    <section class="tab" id="tab-dashboard">
+
+      <div class="card section">
+
+        <h2>Today's dashboard</h2>
+
+        <p class="hint">
+          Switch between what is physically in the transmission room
+          and everything produced today.
+        </p>
+
+        <div class="seg" id="dashboardMode">
+
+          <button class="active" data-mode="room">
+            In room · exclude delivered
+          </button>
+
+          <button data-mode="all">
+            All produced · include delivered
+          </button>
+
+        </div>
+
+        <div class="status-strip" id="statusStrip"></div>
+
+        <div class="report-grid" id="reportGrid"></div>
+
+        <div class="btn-row">
+          <button class="primary" id="copyReportBtn">
+            Copy today's report
+          </button>
+        </div>
+
+        <p class="note" style="margin:10px 0 0">
+          For the reporting total called <b>B</b>, this tool calculates
+          <b>B + MB</b>. B and MB are still shown separately underneath.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- LOGS -->
+    <section class="tab" id="tab-logs">
+
+      <div class="card section">
+
+        <h2>Logs & delivery</h2>
+
+        <p class="hint">
+          Each row can be edited anytime. Use the green/orange status
+          button on one row, or select several rows and change their
+          delivery status together.
+        </p>
+
+        <div class="filters">
+
+          <div class="field">
+            <label>Date range</label>
+
+            <select id="filterRange">
+              <option value="today">Today</option>
+              <option value="week">This week</option>
+              <option value="all">All dates</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Worker</label>
+            <select id="filterWorker"></select>
+          </div>
+
+          <div class="field">
+            <label>Quality</label>
+
+            <select id="filterQuality">
+              <option value="all">All qualities</option>
+              <option>B</option>
+              <option>B+</option>
+              <option>C+</option>
+              <option>BS</option>
+              <option>MB</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Status</label>
+
+            <select id="filterStatus">
+              <option value="all">All status</option>
+              <option value="room">In room</option>
+              <option value="delivered">Delivered</option>
+            </select>
+          </div>
+
+          <div class="custom-dates" id="customDates">
+
+            <div class="field">
+              <label>From</label>
+              <input type="date" id="filterFrom">
+            </div>
+
+            <div class="field">
+              <label>To</label>
+              <input type="date" id="filterTo">
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="summary-line" id="logSummary"></div>
+
+        <div class="btn-row">
+          <button class="secondary" id="selectAllBtn">
+            Select visible
+          </button>
+
+          <button class="secondary" id="clearFiltersBtn">
+            Reset filters
+          </button>
+        </div>
+
+        <div class="batchbar" id="batchbar">
+
+          <div class="n" id="batchCount">
+            0 selected
+          </div>
+
+          <button class="deliver" id="markDeliveredBtn">
+            Mark delivered
+          </button>
+
+          <button class="undo" id="markRoomBtn">
+            Mark in room
+          </button>
+
+          <button class="clear" id="clearSelectionBtn">
+            ×
+          </button>
+
+        </div>
+
+        <div class="log-list" id="logList"></div>
+
+      </div>
+
+
+      <div class="card section">
+
+        <h2>Employee summary</h2>
+
+        <p class="hint">
+          Uses the same date/worker/quality filters above.
+          Full and half remain separate.
+        </p>
+
+        <div class="people-summary" id="peopleSummary"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- WORKERS -->
+    <section class="tab" id="tab-workers">
+
+      <div class="card section">
+
+        <h2>Workers</h2>
+
+        <p class="hint">
+          <span id="workerCount"></span>
+          · tap Edit to change a name or number.
+          The entry screen only shows workers saved here.
+        </p>
+
+        <div class="worker-list" id="workerList"></div>
+
+        <div class="edit-worker-form" id="workerForm">
+
+          <div class="row">
+            <input
+              id="workerNumber"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              placeholder="No."
+            >
+
+            <input
+              id="workerName"
+              placeholder="Worker name"
+            >
+          </div>
+
+          <div class="btn-row">
+
+            <button class="secondary" id="cancelWorkerBtn">
+              Cancel
+            </button>
+
+            <button class="primary" id="saveWorkerBtn">
+              Save worker
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="btn-row">
+
+          <button class="primary" id="addWorkerBtn">
+            + Add worker
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="card section">
+
+        <h2>Data & backup</h2>
+
+        <p class="hint">
+          Production is stored in this browser on this device.
+          Export a backup occasionally, especially before clearing
+          Safari data or changing phones.
+        </p>
+
+        <div class="settings-grid">
+
+          <button class="secondary" id="exportCsvBtn">
+            Export CSV
+          </button>
+
+          <button class="secondary" id="exportJsonBtn">
+            Backup JSON
+          </button>
+
+          <button class="secondary" id="importJsonBtn">
+            Restore JSON
+          </button>
+
+          <button class="danger" id="clearEntriesBtn">
+            Clear production
+          </button>
+
+        </div>
+
+        <input
+          type="file"
+          accept="application/json,.json"
+          id="importFile"
+          hidden
+        >
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+
+  <button class="active" data-tab="entry">
+    <span class="ico">➕</span>
+    Entry
+  </button>
+
+  <button data-tab="dashboard">
+    <span class="ico">📊</span>
+    Dashboard
+  </button>
+
+  <button data-tab="logs">
+    <span class="ico">📋</span>
+    Logs
+  </button>
+
+  <button data-tab="workers">
+    <span class="ico">👥</span>
+    Workers
+  </button>
+
+</nav>
+
+
+<!-- ENTRY / EDIT MODAL -->
+<div class="modal" id="entryModal">
+
+  <div class="sheet">
+
+    <div class="sheet-handle"></div>
+
+    <div class="sheet-head">
+
+      <div>
+        <div class="note" id="modalModeLabel">
+          New production
+        </div>
+
+        <h3 id="modalTitle">
+          Add B
+        </h3>
+      </div>
+
+      <button class="closebtn" id="closeModalBtn">
+        ×
+      </button>
+
+    </div>
+
+
+    <form id="entryForm">
+
+      <input type="hidden" id="modalQuality">
+      <input type="hidden" id="modalWorker">
+      <input type="hidden" id="editingId">
+
+
+      <div class="field">
+
+        <label>QUALITY</label>
+
+        <select id="editQuality">
+          <option>B</option>
+          <option>B+</option>
+          <option>C+</option>
+          <option>BS</option>
+          <option>MB</option>
+        </select>
+
+      </div>
+
+
+      <div class="count-grid">
+
+        <div class="countbox">
+
+          <label>FULL BOXES</label>
+
+          <input
+            id="fullCount"
+            type="number"
+            min="0"
+            step="1"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            value="0"
+          >
+
+        </div>
+
+
+        <div class="countbox">
+
+          <label>HALF BOXES</label>
+
+          <input
+            id="halfCount"
+            type="number"
+            min="0"
+            step="1"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            value="0"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div class="worker-label">
+        WHO MADE IT? · OPTIONAL
+      </div>
+
+      <div class="worker-chips" id="workerChips"></div>
+
+
+      <label class="checkline">
+
+        <input type="checkbox" id="foamBox">
+
+        <span>
+          <b>Foam box</b>
+          <small>Optional. Applies to this whole entry.</small>
+        </span>
+
+      </label>
+
+
+      <div class="modal-form-actions">
+
+        <button
+          type="button"
+          class="secondary"
+          id="cancelEntryBtn"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="primary"
+          id="saveEntryBtn"
+        >
+          Save production
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
 
 <script>
 (() => {
+
   'use strict';
 
-  const QUALITIES = ['B','B+','C+','BS','MB'];
-  const ENTRY_KEY = 'salmon_entries_v5'; // keep DeepSeek's latest key so existing phone data stays compatible
+
+  const QUALITIES = [
+    'B',
+    'B+',
+    'C+',
+    'BS',
+    'MB'
+  ];
+
+
+  const ENTRY_KEY = 'salmon_entries_v5';
+
   const WORKER_KEY = 'salmon_workers';
-  const OLD_ENTRY_KEYS = ['salmon_entries_v4','salmon_entries','salmon_production_entries'];
-  const OLD_WORKER_KEYS = ['salmon_production_workers'];
+
+
+  const OLD_ENTRY_KEYS = [
+    'salmon_entries_v4',
+    'salmon_entries',
+    'salmon_production_entries'
+  ];
+
+
+  const OLD_WORKER_KEYS = [
+    'salmon_production_workers'
+  ];
+
+
   const MAX_WORKERS = 20;
 
-  const $ = (id) => document.getElementById(id);
+
+  const $ = (id) =>
+    document.getElementById(id);
+
+
   let entries = [];
+
   let workers = [];
+
   let selectedIds = new Set();
+
   let selectedWorkerNum = null;
+
   let dashboardMode = 'room';
+
   let editingWorkerOriginalNumber = null;
 
+
+
+  /* -----------------------------------
+     DATE
+  ----------------------------------- */
+
   function localDateISO(d = new Date()) {
+
     const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const day = String(d.getDate()).padStart(2,'0');
+
+    const m =
+      String(d.getMonth() + 1)
+      .padStart(2,'0');
+
+    const day =
+      String(d.getDate())
+      .padStart(2,'0');
+
     return `${y}-${m}-${day}`;
   }
-  function prettyDate(iso) {
-    if (!iso) return '';
-    const [y,m,d] = iso.split('-').map(Number);
-    return new Intl.DateTimeFormat(undefined,{day:'numeric',month:'short',year:'numeric'}).format(new Date(y,m-1,d));
-  }
-  function safeInt(v){ const n = parseInt(v,10); return Number.isFinite(n) && n > 0 ? n : 0; }
-  function nowISO(){ return new Date().toISOString(); }
-  function id(){ return (crypto.randomUUID ? crypto.randomUUID() : `${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`); }
-  function storageGet(key){ try { const raw=localStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
-  function storageSet(key,val){ try { localStorage.setItem(key,JSON.stringify(val)); return true; } catch(e){ toast('Could not save data in browser storage.'); return false; } }
 
-  function normalizeEntry(e){
-    const oldCount = safeInt(e.boxCount ?? e.count ?? 0);
-    const oldType = String(e.boxType || '').toLowerCase();
-    const fullCount = e.fullCount !== undefined ? safeInt(e.fullCount) : (oldType === 'full' ? oldCount : 0);
-    const halfCount = e.halfCount !== undefined ? safeInt(e.halfCount) : (oldType === 'half' ? oldCount : 0);
+
+  function prettyDate(iso) {
+
+    if (!iso) return '';
+
+    const [y,m,d] =
+      iso
+      .split('-')
+      .map(Number);
+
+    return new Intl.DateTimeFormat(
+      undefined,
+      {
+        day:'numeric',
+        month:'short',
+        year:'numeric'
+      }
+    ).format(
+      new Date(y,m-1,d)
+    );
+  }
+
+
+
+  /* -----------------------------------
+     BASIC HELPERS
+  ----------------------------------- */
+
+  function safeInt(v) {
+
+    const n =
+      parseInt(v,10);
+
+    return (
+      Number.isFinite(n) &&
+      n > 0
+    )
+      ? n
+      : 0;
+  }
+
+
+  function nowISO() {
+    return new Date().toISOString();
+  }
+
+
+  function id() {
+
+    return (
+      crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`
+    );
+  }
+
+
+
+  /* -----------------------------------
+     STORAGE
+  ----------------------------------- */
+
+  function storageGet(key) {
+
+    try {
+
+      const raw =
+        localStorage.getItem(key);
+
+      return raw
+        ? JSON.parse(raw)
+        : null;
+
+    } catch(e) {
+
+      return null;
+
+    }
+  }
+
+
+  function storageSet(key,val) {
+
+    try {
+
+      localStorage.setItem(
+        key,
+        JSON.stringify(val)
+      );
+
+      return true;
+
+    } catch(e) {
+
+      toast(
+        'Could not save data in browser storage.'
+      );
+
+      return false;
+
+    }
+  }
+
+
+
+  /* -----------------------------------
+     OLD ENTRY MIGRATION
+  ----------------------------------- */
+
+  function normalizeEntry(e) {
+
+    const oldCount =
+      safeInt(
+        e.boxCount ??
+        e.count ??
+        0
+      );
+
+
+    const oldType =
+      String(
+        e.boxType || ''
+      ).toLowerCase();
+
+
+    const fullCount =
+      e.fullCount !== undefined
+        ? safeInt(e.fullCount)
+        : (
+            oldType === 'full'
+              ? oldCount
+              : 0
+          );
+
+
+    const halfCount =
+      e.halfCount !== undefined
+        ? safeInt(e.halfCount)
+        : (
+            oldType === 'half'
+              ? oldCount
+              : 0
+          );
+
+
     return {
-      id: String(e.id || id()),
-      date: e.date || localDateISO(),
-      quality: QUALITIES.includes(e.quality) ? e.quality : 'B',
-      fullCount, halfCount,
-      workerNum: e.workerNum ? parseInt(e.workerNum,10) : (e.workerNumber ? parseInt(e.workerNumber,10) : null),
-      foamBox: Boolean(e.foamBox),
-      delivered: Boolean(e.delivered),
-      deliveredAt: e.deliveredAt || null,
-      createdAt: e.createdAt || e.updatedAt || nowISO(),
-      updatedAt: e.updatedAt || e.createdAt || nowISO()
+
+      id:
+        String(
+          e.id || id()
+        ),
+
+      date:
+        e.date ||
+        localDateISO(),
+
+      quality:
+        QUALITIES.includes(e.quality)
+          ? e.quality
+          : 'B',
+
+      fullCount,
+
+      halfCount,
+
+      workerNum:
+        e.workerNum
+          ? parseInt(e.workerNum,10)
+          : (
+              e.workerNumber
+                ? parseInt(e.workerNumber,10)
+                : null
+            ),
+
+      foamBox:
+        Boolean(e.foamBox),
+
+      delivered:
+        Boolean(e.delivered),
+
+      deliveredAt:
+        e.deliveredAt || null,
+
+      createdAt:
+        e.createdAt ||
+        e.updatedAt ||
+        nowISO(),
+
+      updatedAt:
+        e.updatedAt ||
+        e.createdAt ||
+        nowISO()
+
     };
   }
-  function loadEntries(){
-    let data = storageGet(ENTRY_KEY);
-    if (!Array.isArray(data)) {
-      for (const key of OLD_ENTRY_KEYS) { const old=storageGet(key); if (Array.isArray(old) && old.length) { data=old; break; } }
-    }
-    return Array.isArray(data) ? data.map(normalizeEntry) : [];
-  }
-  function saveEntries(){ storageSet(ENTRY_KEY, entries); }
-  function loadWorkers(){
-    let data = storageGet(WORKER_KEY);
-    if (!Array.isArray(data)) {
-      for (const key of OLD_WORKER_KEYS) { const old=storageGet(key); if (Array.isArray(old) && old.length) { data=old; break; } }
-    }
-    if (!Array.isArray(data) || !data.length) data = [
-      {number:1,name:'Qi Che'}, {number:2,name:'Suman'}, {number:3,name:'Arjun'},
-      {number:5,name:'Monk'}, {number:6,name:'Aorigele'}, {number:7,name:'Jie Tang'},
-      {number:8,name:'David'}, {number:9,name:'Yongfu Tang'}
-    ];
-    const normalized = data.map(w=>({number:parseInt(w.number,10),name:String(w.name||'').trim()})).filter(w=>Number.isFinite(w.number)&&w.name);
-    // Keep the confirmed factory IDs correct even when upgrading an older saved worker list.
-    const confirmed = new Map([[5,'Monk'],[8,'David']]);
-    confirmed.forEach((name, number)=>{
-      const existing = normalized.find(w=>w.number===number);
-      if (existing) existing.name = name;
-      else normalized.push({number,name});
-    });
-    return normalized.sort((a,b)=>a.number-b.number);
-  }
-  function saveWorkers(){ storageSet(WORKER_KEY, workers); }
-  function getWorker(num){ return workers.find(w=>w.number===num); }
 
-  function counts(list){
-    const out={}; QUALITIES.forEach(q=>out[q]={full:0,half:0});
-    list.forEach(e=>{ if(out[e.quality]){out[e.quality].full+=safeInt(e.fullCount);out[e.quality].half+=safeInt(e.halfCount);} });
+
+
+  function loadEntries() {
+
+    let data =
+      storageGet(ENTRY_KEY);
+
+
+    if (!Array.isArray(data)) {
+
+      for (
+        const key
+        of OLD_ENTRY_KEYS
+      ) {
+
+        const old =
+          storageGet(key);
+
+        if (
+          Array.isArray(old) &&
+          old.length
+        ) {
+
+          data = old;
+
+          break;
+        }
+
+      }
+    }
+
+
+    return Array.isArray(data)
+      ? data.map(normalizeEntry)
+      : [];
+  }
+
+
+
+  function saveEntries() {
+
+    storageSet(
+      ENTRY_KEY,
+      entries
+    );
+  }
+
+
+
+  /* -----------------------------------
+     WORKERS
+  ----------------------------------- */
+
+  function loadWorkers() {
+
+    let data =
+      storageGet(WORKER_KEY);
+
+
+    if (!Array.isArray(data)) {
+
+      for (
+        const key
+        of OLD_WORKER_KEYS
+      ) {
+
+        const old =
+          storageGet(key);
+
+        if (
+          Array.isArray(old) &&
+          old.length
+        ) {
+
+          data = old;
+
+          break;
+        }
+
+      }
+    }
+
+
+    if (
+      !Array.isArray(data) ||
+      !data.length
+    ) {
+
+      data = [
+
+        {
+          number:1,
+          name:'Qi Che'
+        },
+
+        {
+          number:2,
+          name:'Suman'
+        },
+
+        {
+          number:3,
+          name:'Arjun'
+        },
+
+        {
+          number:5,
+          name:'Monk'
+        },
+
+        {
+          number:6,
+          name:'Aorigele'
+        },
+
+        {
+          number:7,
+          name:'Jie Tang'
+        },
+
+        {
+          number:8,
+          name:'David'
+        },
+
+        {
+          number:9,
+          name:'Yongfu Tang'
+        }
+
+      ];
+
+    }
+
+
+    const normalized =
+      data
+      .map(
+        w => ({
+          number:
+            parseInt(
+              w.number,
+              10
+            ),
+
+          name:
+            String(
+              w.name || ''
+            ).trim()
+        })
+      )
+      .filter(
+        w =>
+          Number.isFinite(
+            w.number
+          )
+          &&
+          w.name
+      );
+
+
+    /*
+      Keep confirmed worker IDs
+      correct when upgrading from
+      an older version.
+    */
+
+    const confirmed =
+      new Map([
+        [5,'Monk'],
+        [8,'David']
+      ]);
+
+
+    confirmed.forEach(
+      (name,number) => {
+
+        const existing =
+          normalized.find(
+            w =>
+              w.number === number
+          );
+
+
+        if (existing) {
+
+          existing.name =
+            name;
+
+        } else {
+
+          normalized.push({
+            number,
+            name
+          });
+
+        }
+
+      }
+    );
+
+
+    return normalized.sort(
+      (a,b) =>
+        a.number - b.number
+    );
+  }
+
+
+
+  function saveWorkers() {
+
+    storageSet(
+      WORKER_KEY,
+      workers
+    );
+  }
+
+
+
+  function getWorker(num) {
+
+    return workers.find(
+      w =>
+        w.number === num
+    );
+  }
+
+
+
+  /* -----------------------------------
+     COUNTING
+  ----------------------------------- */
+
+  function counts(list) {
+
+    const out = {};
+
+
+    QUALITIES.forEach(
+      q => {
+
+        out[q] = {
+          full:0,
+          half:0
+        };
+
+      }
+    );
+
+
+    list.forEach(
+      e => {
+
+        if (
+          out[e.quality]
+        ) {
+
+          out[e.quality].full +=
+            safeInt(
+              e.fullCount
+            );
+
+          out[e.quality].half +=
+            safeInt(
+              e.halfCount
+            );
+
+        }
+
+      }
+    );
+
+
     return out;
   }
-  function totalPair(list){ return list.reduce((a,e)=>({full:a.full+safeInt(e.fullCount),half:a.half+safeInt(e.halfCount)}),{full:0,half:0}); }
-  function pairText(p){ return `${p.full} full · ${p.half} half`; }
-  function todayEntries(){ const t=localDateISO(); return entries.filter(e=>e.date===t); }
+
+
+
+  function totalPair(list) {
+
+    return list.reduce(
+      (a,e) => ({
+
+        full:
+          a.full +
+          safeInt(
+            e.fullCount
+          ),
+
+        half:
+          a.half +
+          safeInt(
+            e.halfCount
+          )
+
+      }),
+
+      {
+        full:0,
+        half:0
+      }
+    );
+  }
+
+
+
+  function pairText(p) {
+
+    return (
+      `${p.full} full · ${p.half} half`
+    );
+  }
+
+
+
+  function todayEntries() {
+
+    const t =
+      localDateISO();
+
+    return entries.filter(
+      e =>
+        e.date === t
+    );
+  }
+
+
+
+  /* -----------------------------------
+     TOAST
+  ----------------------------------- */
 
   let toastTimer;
-  function toast(msg){ const el=$('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
 
-  function renderHeader(){ $('todayPill').textContent=prettyDate(localDateISO()); }
 
-  function renderQualityGrid(){
-    const c=counts(todayEntries());
-    $('qualityGrid').innerHTML=QUALITIES.map(q=>`<button class="quality-btn" data-quality="${q}" aria-label="Add ${q} production"><span class="badge">today</span><span class="q">${q}</span><span class="counts">${c[q].full} F · ${c[q].half} H</span><span class="sub">tap to add</span></button>`).join('');
-    document.querySelectorAll('.quality-btn').forEach(btn=>btn.addEventListener('click',()=>openEntry(btn.dataset.quality)));
+  function toast(msg) {
+
+    const el =
+      $('toast');
+
+
+    el.textContent =
+      msg;
+
+
+    el.classList.add(
+      'show'
+    );
+
+
+    clearTimeout(
+      toastTimer
+    );
+
+
+    toastTimer =
+      setTimeout(
+        () =>
+          el.classList.remove(
+            'show'
+          ),
+        2200
+      );
   }
 
-  function renderRecent(){
-    const list=todayEntries().slice().sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,5);
-    if(!list.length){ $('recentList').innerHTML='<div class="empty">No production entered today yet.</div>'; return; }
-    $('recentList').innerHTML=list.map(e=>{ const w=getWorker(e.workerNum); return `<div class="recent-row"><div class="recent-main"><strong>${e.quality}${e.foamBox?' · Foam':''}</strong><small>${w?`#${w.number} ${escapeHtml(w.name)}`:'No worker'} · ${e.delivered?'Delivered':'In room'}</small></div><div class="recent-count">${e.fullCount} F · ${e.halfCount} H</div></div>`; }).join('');
+
+
+  /* -----------------------------------
+     HEADER
+  ----------------------------------- */
+
+  function renderHeader() {
+
+    $('todayPill').textContent =
+      prettyDate(
+        localDateISO()
+      );
   }
 
-  function renderDashboard(){
-    const all=todayEntries();
-    const room=all.filter(e=>!e.delivered);
-    const delivered=all.filter(e=>e.delivered);
-    const display=dashboardMode==='room'?room:all;
-    const c=counts(display), allT=totalPair(all), roomT=totalPair(room), delT=totalPair(delivered);
-    $('statusStrip').innerHTML=`<div class="stat"><b>${pairText(allT)}</b><span>Produced today</span></div><div class="stat"><b>${pairText(delT)}</b><span>Delivered</span></div><div class="stat"><b>${pairText(roomT)}</b><span>In room now</span></div>`;
-    const bCombined={full:c.B.full+c.MB.full,half:c.B.half+c.MB.half};
-    const title=dashboardMode==='room'?'IN TRANSMISSION ROOM':'TOTAL PRODUCED TODAY';
-    let html=`<div class="report-card hero"><div class="label">${title} · REPORT B</div><div class="big">${pairText(bCombined)}</div><div class="formula">B report = B + MB</div></div>`;
-    QUALITIES.forEach(q=>{ html+=`<div class="report-card"><div class="label">${q}</div><div class="big">${c[q].full} F · ${c[q].half} H</div><div class="tiny">${c[q].full} full and ${c[q].half} half</div></div>`; });
-    $('reportGrid').innerHTML=html;
+
+
+  /* -----------------------------------
+     QUALITY BUTTONS
+  ----------------------------------- */
+
+  function renderQualityGrid() {
+
+    const c =
+      counts(
+        todayEntries()
+      );
+
+
+    $('qualityGrid').innerHTML =
+      QUALITIES.map(
+        q => `
+
+          <button
+            class="quality-btn"
+            data-quality="${q}"
+            aria-label="Add ${q} production"
+          >
+
+            <span class="badge">
+              today
+            </span>
+
+            <span class="q">
+              ${q}
+            </span>
+
+            <span class="counts">
+              ${c[q].full} F ·
+              ${c[q].half} H
+            </span>
+
+            <span class="sub">
+              tap to add
+            </span>
+
+          </button>
+
+        `
+      ).join('');
+
+
+    document
+      .querySelectorAll(
+        '.quality-btn'
+      )
+      .forEach(
+        btn =>
+          btn.addEventListener(
+            'click',
+            () =>
+              openEntry(
+                btn.dataset.quality
+              )
+          )
+      );
   }
 
-  function mondayISO(){ const d=new Date(); const day=d.getDay()||7; d.setDate(d.getDate()-(day-1)); return localDateISO(d); }
-  function filteredEntries(){
-    let list=entries.slice(); const range=$('filterRange').value;
-    if(range==='today') list=list.filter(e=>e.date===localDateISO());
-    else if(range==='week'){ const from=mondayISO(),to=localDateISO(); list=list.filter(e=>e.date>=from&&e.date<=to); }
-    else if(range==='custom'){ const from=$('filterFrom').value,to=$('filterTo').value; if(from)list=list.filter(e=>e.date>=from); if(to)list=list.filter(e=>e.date<=to); }
-    const worker=$('filterWorker').value; if(worker!=='all') list=list.filter(e=>String(e.workerNum||'')===worker);
-    const quality=$('filterQuality').value; if(quality!=='all') list=list.filter(e=>e.quality===quality);
-    const status=$('filterStatus').value; if(status==='room')list=list.filter(e=>!e.delivered); else if(status==='delivered')list=list.filter(e=>e.delivered);
+
+
+  /* -----------------------------------
+     RECENT ENTRIES
+  ----------------------------------- */
+
+  function renderRecent() {
+
+    const list =
+      todayEntries()
+      .slice()
+      .sort(
+        (a,b) =>
+          String(
+            b.createdAt
+          ).localeCompare(
+            String(
+              a.createdAt
+            )
+          )
+      )
+      .slice(0,5);
+
+
+    if (!list.length) {
+
+      $('recentList').innerHTML =
+        `
+          <div class="empty">
+            No production entered today yet.
+          </div>
+        `;
+
+      return;
+    }
+
+
+    $('recentList').innerHTML =
+      list.map(
+        e => {
+
+          const w =
+            getWorker(
+              e.workerNum
+            );
+
+
+          return `
+
+            <div class="recent-row">
+
+              <div class="recent-main">
+
+                <strong>
+                  ${e.quality}
+                  ${
+                    e.foamBox
+                      ? ' · Foam'
+                      : ''
+                  }
+                </strong>
+
+                <small>
+
+                  ${
+                    w
+                      ? `#${w.number} ${escapeHtml(w.name)}`
+                      : 'No worker'
+                  }
+
+                  ·
+
+                  ${
+                    e.delivered
+                      ? 'Delivered'
+                      : 'In room'
+                  }
+
+                </small>
+
+              </div>
+
+
+              <div class="recent-count">
+                ${e.fullCount} F ·
+                ${e.halfCount} H
+              </div>
+
+
+              <div class="recent-actions">
+
+                <button
+                  class="mini-action recent-edit"
+                  data-id="${e.id}"
+                >
+                  Edit
+                </button>
+
+
+                <button
+                  class="
+                    mini-action
+                    recent-status
+                    ${
+                      e.delivered
+                        ? 'status-delivered'
+                        : 'status-room'
+                    }
+                  "
+                  data-id="${e.id}"
+                >
+
+                  ${
+                    e.delivered
+                      ? 'Mark in room'
+                      : 'Mark delivered'
+                  }
+
+                </button>
+
+              </div>
+
+            </div>
+
+          `;
+        }
+      ).join('');
+
+
+    document
+      .querySelectorAll(
+        '.recent-edit'
+      )
+      .forEach(
+        btn =>
+          btn.addEventListener(
+            'click',
+            () =>
+              editEntry(
+                btn.dataset.id
+              )
+          )
+      );
+
+
+    document
+      .querySelectorAll(
+        '.recent-status'
+      )
+      .forEach(
+        btn =>
+          btn.addEventListener(
+            'click',
+            () =>
+              toggleEntryDelivery(
+                btn.dataset.id
+              )
+          )
+      );
+  }
+
+
+
+  /* -----------------------------------
+     DASHBOARD
+  ----------------------------------- */
+
+  function renderDashboard() {
+
+    const all =
+      todayEntries();
+
+
+    const room =
+      all.filter(
+        e =>
+          !e.delivered
+      );
+
+
+    const delivered =
+      all.filter(
+        e =>
+          e.delivered
+      );
+
+
+    const display =
+      dashboardMode === 'room'
+        ? room
+        : all;
+
+
+    const c =
+      counts(display);
+
+
+    const allT =
+      totalPair(all);
+
+
+    const roomT =
+      totalPair(room);
+
+
+    const delT =
+      totalPair(delivered);
+
+
+    $('statusStrip').innerHTML = `
+
+      <div class="stat">
+
+        <b>
+          ${pairText(allT)}
+        </b>
+
+        <span>
+          Produced today
+        </span>
+
+      </div>
+
+
+      <div class="stat">
+
+        <b>
+          ${pairText(delT)}
+        </b>
+
+        <span>
+          Delivered
+        </span>
+
+      </div>
+
+
+      <div class="stat">
+
+        <b>
+          ${pairText(roomT)}
+        </b>
+
+        <span>
+          In room now
+        </span>
+
+      </div>
+
+    `;
+
+
+    const bCombined = {
+
+      full:
+        c.B.full +
+        c.MB.full,
+
+      half:
+        c.B.half +
+        c.MB.half
+
+    };
+
+
+    const title =
+      dashboardMode === 'room'
+        ? 'IN TRANSMISSION ROOM'
+        : 'TOTAL PRODUCED TODAY';
+
+
+    let html = `
+
+      <div class="report-card hero">
+
+        <div class="label">
+          ${title} · REPORT B
+        </div>
+
+        <div class="big">
+          ${pairText(bCombined)}
+        </div>
+
+        <div class="formula">
+          B report = B + MB
+        </div>
+
+      </div>
+
+    `;
+
+
+    QUALITIES.forEach(
+      q => {
+
+        html += `
+
+          <div class="report-card">
+
+            <div class="label">
+              ${q}
+            </div>
+
+            <div class="big">
+              ${c[q].full} F ·
+              ${c[q].half} H
+            </div>
+
+            <div class="tiny">
+              ${c[q].full} full
+              and
+              ${c[q].half} half
+            </div>
+
+          </div>
+
+        `;
+      }
+    );
+
+
+    $('reportGrid').innerHTML =
+      html;
+  }
+
+
+
+  /* -----------------------------------
+     DATE FILTER
+  ----------------------------------- */
+
+  function mondayISO() {
+
+    const d =
+      new Date();
+
+
+    const day =
+      d.getDay() || 7;
+
+
+    d.setDate(
+      d.getDate() -
+      (day - 1)
+    );
+
+
+    return localDateISO(d);
+  }
+
+
+
+  function filteredEntries() {
+
+    let list =
+      entries.slice();
+
+
+    const range =
+      $('filterRange').value;
+
+
+    if (
+      range === 'today'
+    ) {
+
+      list =
+        list.filter(
+          e =>
+            e.date ===
+            localDateISO()
+        );
+
+    }
+
+
+    else if (
+      range === 'week'
+    ) {
+
+      const from =
+        mondayISO();
+
+      const to =
+        localDateISO();
+
+
+      list =
+        list.filter(
+          e =>
+            e.date >= from &&
+            e.date <= to
+        );
+
+    }
+
+
+    else if (
+      range === 'custom'
+    ) {
+
+      const from =
+        $('filterFrom').value;
+
+      const to =
+        $('filterTo').value;
+
+
+      if (from) {
+
+        list =
+          list.filter(
+            e =>
+              e.date >= from
+          );
+
+      }
+
+
+      if (to) {
+
+        list =
+          list.filter(
+            e =>
+              e.date <= to
+          );
+
+      }
+
+    }
+
+
+    const worker =
+      $('filterWorker').value;
+
+
+    if (
+      worker !== 'all'
+    ) {
+
+      list =
+        list.filter(
+          e =>
+            String(
+              e.workerNum || ''
+            ) === worker
+        );
+
+    }
+
+
+    const quality =
+      $('filterQuality').value;
+
+
+    if (
+      quality !== 'all'
+    ) {
+
+      list =
+        list.filter(
+          e =>
+            e.quality === quality
+        );
+
+    }
+
+
+    const status =
+      $('filterStatus').value;
+
+
+    if (
+      status === 'room'
+    ) {
+
+      list =
+        list.filter(
+          e =>
+            !e.delivered
+        );
+
+    }
+
+
+    else if (
+      status === 'delivered'
+    ) {
+
+      list =
+        list.filter(
+          e =>
+            e.delivered
+        );
+
+    }
+
+
     return list;
   }
-  function renderFilters(){
-    const current=$('filterWorker').value || 'all';
-    $('filterWorker').innerHTML='<option value="all">All workers</option>'+workers.map(w=>`<option value="${w.number}">#${w.number} ${escapeHtml(w.name)}</option>`).join('');
-    $('filterWorker').value=[...$('filterWorker').options].some(o=>o.value===current)?current:'all';
-    $('customDates').classList.toggle('show',$('filterRange').value==='custom');
-  }
-  function renderLogs(){
-    const list=filteredEntries(); const total=totalPair(list); const room=totalPair(list.filter(e=>!e.delivered));
-    $('logSummary').innerHTML=`${list.length} entr${list.length===1?'y':'ies'} · <span>${total.full} full · ${total.half} half</span> · in room: ${room.full} F · ${room.half} H`;
-    const sorted=list.slice().sort((a,b)=>b.date.localeCompare(a.date)||String(b.createdAt).localeCompare(String(a.createdAt)));
-    if(!sorted.length){ $('logList').innerHTML='<div class="empty">No entries match these filters.</div>'; }
-    else $('logList').innerHTML=sorted.map(e=>{
-      const w=getWorker(e.workerNum), selected=selectedIds.has(e.id);
-      return `<div class="log-card ${selected?'selected':''}" data-id="${e.id}"><input class="selectbox log-select" type="checkbox" data-id="${e.id}" ${selected?'checked':''}><div><div class="log-q">${e.quality}</div><div class="log-meta">${prettyDate(e.date)}${w?` · #${w.number} ${escapeHtml(w.name)}`:' · No worker'}<br><span class="pill ${e.delivered?'delivered':'room'}">${e.delivered?'✓ Delivered':'● In room'}</span>${e.foamBox?'<span class="pill foam">Foam</span>':''}</div></div><div class="log-count">${e.fullCount} F<br>${e.halfCount} H</div><div class="log-actions"><button class="iconbtn edit-entry" data-id="${e.id}">Edit</button><button class="iconbtn delete-entry" data-id="${e.id}">Delete</button></div></div>`;
-    }).join('');
-    document.querySelectorAll('.log-select').forEach(el=>el.addEventListener('change',()=>toggleSelection(el.dataset.id)));
-    document.querySelectorAll('.edit-entry').forEach(el=>el.addEventListener('click',()=>editEntry(el.dataset.id)));
-    document.querySelectorAll('.delete-entry').forEach(el=>el.addEventListener('click',()=>deleteEntry(el.dataset.id)));
-    renderBatchBar(); renderPeopleSummary(list);
-  }
-  function renderPeopleSummary(list){
-    const grouped=new Map();
-    list.filter(e=>e.workerNum).forEach(e=>{ if(!grouped.has(e.workerNum))grouped.set(e.workerNum,[]);grouped.get(e.workerNum).push(e); });
-    if(!grouped.size){ $('peopleSummary').innerHTML='<div class="empty">No worker-assigned entries in this range.</div>'; return; }
-    $('peopleSummary').innerHTML=[...grouped.entries()].sort((a,b)=>a[0]-b[0]).map(([num,arr])=>{
-      const w=getWorker(num), t=totalPair(arr), c=counts(arr);
-      const detail=QUALITIES.filter(q=>c[q].full||c[q].half).map(q=>`${q}: ${c[q].full} F / ${c[q].half} H`).join(' · ');
-      return `<div class="person-card"><div class="person-top"><span>#${num} ${escapeHtml(w?.name||'Unknown')}</span><span>${t.full} F · ${t.half} H</span></div><div class="person-detail">${detail||'No boxes'}</div></div>`;
-    }).join('');
+
+
+
+  function renderFilters() {
+
+    const current =
+      $('filterWorker').value ||
+      'all';
+
+
+    $('filterWorker').innerHTML =
+
+      '<option value="all">All workers</option>'
+
+      +
+
+      workers
+      .map(
+        w => `
+
+          <option value="${w.number}">
+            #${w.number}
+            ${escapeHtml(w.name)}
+          </option>
+
+        `
+      )
+      .join('');
+
+
+    $('filterWorker').value =
+
+      [
+        ...$('filterWorker').options
+      ]
+      .some(
+        o =>
+          o.value === current
+      )
+
+      ? current
+      : 'all';
+
+
+    $('customDates')
+      .classList
+      .toggle(
+        'show',
+        $('filterRange').value === 'custom'
+      );
   }
 
-  function renderBatchBar(){ $('batchbar').classList.toggle('show',selectedIds.size>0); $('batchCount').textContent=`${selectedIds.size} selected`; }
-  function toggleSelection(id){ selectedIds.has(id)?selectedIds.delete(id):selectedIds.add(id); renderLogs(); }
-  function selectVisible(){ const ids=filteredEntries().map(e=>e.id); const allSelected=ids.length&&ids.every(x=>selectedIds.has(x)); ids.forEach(x=>allSelected?selectedIds.delete(x):selectedIds.add(x)); renderLogs(); }
-  function markSelected(delivered){
-    if(!selectedIds.size)return;
-    const stamp=nowISO(); entries=entries.map(e=>selectedIds.has(e.id)?{...e,delivered,deliveredAt:delivered?stamp:null,updatedAt:stamp}:e); saveEntries(); selectedIds.clear(); renderAll(); toast(delivered?'Selected entries marked delivered.':'Selected entries returned to room.');
+
+
+  /* -----------------------------------
+     LOGS
+  ----------------------------------- */
+
+  function renderLogs() {
+
+    const list =
+      filteredEntries();
+
+
+    const total =
+      totalPair(list);
+
+
+    const room =
+      totalPair(
+        list.filter(
+          e =>
+            !e.delivered
+        )
+      );
+
+
+    $('logSummary').innerHTML =
+
+      `${list.length} entr${list.length === 1 ? 'y' : 'ies'}`
+
+      +
+
+      ` · <span>${total.full} full · ${total.half} half</span>`
+
+      +
+
+      ` · in room: ${room.full} F · ${room.half} H`;
+
+
+    const sorted =
+      list
+      .slice()
+      .sort(
+        (a,b) =>
+          b.date.localeCompare(
+            a.date
+          )
+          ||
+          String(
+            b.createdAt
+          ).localeCompare(
+            String(
+              a.createdAt
+            )
+          )
+      );
+
+
+    if (
+      !sorted.length
+    ) {
+
+      $('logList').innerHTML =
+        `
+          <div class="empty">
+            No entries match these filters.
+          </div>
+        `;
+
+    }
+
+    else {
+
+      $('logList').innerHTML =
+        sorted.map(
+          e => {
+
+            const w =
+              getWorker(
+                e.workerNum
+              );
+
+
+            const selected =
+              selectedIds.has(
+                e.id
+              );
+
+
+            return `
+
+              <div
+                class="
+                  log-card
+                  ${
+                    selected
+                      ? 'selected'
+                      : ''
+                  }
+                "
+                data-id="${e.id}"
+              >
+
+                <input
+                  class="selectbox log-select"
+                  type="checkbox"
+                  data-id="${e.id}"
+                  ${
+                    selected
+                      ? 'checked'
+                      : ''
+                  }
+                >
+
+
+                <div>
+
+                  <div class="log-q">
+                    ${e.quality}
+                  </div>
+
+
+                  <div class="log-meta">
+
+                    ${prettyDate(e.date)}
+
+                    ${
+                      w
+                        ? ` · #${w.number} ${escapeHtml(w.name)}`
+                        : ' · No worker'
+                    }
+
+                    <br>
+
+
+                    <span
+                      class="
+                        pill
+                        ${
+                          e.delivered
+                            ? 'delivered'
+                            : 'room'
+                        }
+                      "
+                    >
+
+                      ${
+                        e.delivered
+                          ? '✓ Delivered'
+                          : '● In room'
+                      }
+
+                    </span>
+
+
+                    ${
+                      e.foamBox
+                        ? '<span class="pill foam">Foam</span>'
+                        : ''
+                    }
+
+                  </div>
+
+                </div>
+
+
+                <div class="log-count">
+
+                  ${e.fullCount} F
+
+                  <br>
+
+                  ${e.halfCount} H
+
+                </div>
+
+
+                <div class="log-actions">
+
+                  <button
+                    class="iconbtn edit-entry"
+                    data-id="${e.id}"
+                  >
+                    Edit
+                  </button>
+
+
+                  <button
+                    class="
+                      iconbtn
+                      toggle-delivery
+                      ${
+                        e.delivered
+                          ? 'status-to-room'
+                          : 'status-to-delivered'
+                      }
+                    "
+                    data-id="${e.id}"
+                  >
+
+                    ${
+                      e.delivered
+                        ? 'Mark in room'
+                        : 'Mark delivered'
+                    }
+
+                  </button>
+
+
+                  <button
+                    class="iconbtn delete-entry"
+                    data-id="${e.id}"
+                  >
+                    Delete
+                  </button>
+
+                </div>
+
+              </div>
+
+            `;
+          }
+        )
+        .join('');
+
+    }
+
+
+    document
+      .querySelectorAll(
+        '.log-select'
+      )
+      .forEach(
+        el =>
+          el.addEventListener(
+            'change',
+            () =>
+              toggleSelection(
+                el.dataset.id
+              )
+          )
+      );
+
+
+    document
+      .querySelectorAll(
+        '.edit-entry'
+      )
+      .forEach(
+        el =>
+          el.addEventListener(
+            'click',
+            () =>
+              editEntry(
+                el.dataset.id
+              )
+          )
+      );
+
+
+    document
+      .querySelectorAll(
+        '.toggle-delivery'
+      )
+      .forEach(
+        el =>
+          el.addEventListener(
+            'click',
+            () =>
+              toggleEntryDelivery(
+                el.dataset.id
+              )
+          )
+      );
+
+
+    document
+      .querySelectorAll(
+        '.delete-entry'
+      )
+      .forEach(
+        el =>
+          el.addEventListener(
+            'click',
+            () =>
+              deleteEntry(
+                el.dataset.id
+              )
+          )
+      );
+
+
+    renderBatchBar();
+
+    renderPeopleSummary(
+      list
+    );
   }
 
-  function openEntry(quality, existing=null){
-    selectedWorkerNum=existing?.workerNum||null;
-    $('editingId').value=existing?.id||''; $('modalQuality').value=quality; $('fullCount').value=existing?.fullCount||0; $('halfCount').value=existing?.halfCount||0; $('foamBox').checked=Boolean(existing?.foamBox); $('modalWorker').value=selectedWorkerNum||'';
-    $('modalModeLabel').textContent=existing?'Edit production':'New production · today'; $('modalTitle').textContent=`${existing?'Edit':'Add'} ${quality}`; $('saveEntryBtn').textContent=existing?'Save changes':'Save production';
-    renderWorkerChips(); $('entryModal').classList.add('open'); setTimeout(()=>$('fullCount').focus(),80);
-  }
-  function closeEntry(){ $('entryModal').classList.remove('open'); selectedWorkerNum=null; }
-  function renderWorkerChips(){
-    let html=`<button type="button" class="worker-chip none ${selectedWorkerNum===null?'selected':''}" data-worker="">No worker</button>`;
-    workers.forEach(w=>{html+=`<button type="button" class="worker-chip ${selectedWorkerNum===w.number?'selected':''}" data-worker="${w.number}"><span class="num">#${w.number}</span><span class="name">${escapeHtml(w.name)}</span></button>`;});
-    $('workerChips').innerHTML=html; document.querySelectorAll('.worker-chip').forEach(btn=>btn.addEventListener('click',()=>{ selectedWorkerNum=btn.dataset.worker===''?null:parseInt(btn.dataset.worker,10); $('modalWorker').value=selectedWorkerNum||''; renderWorkerChips(); }));
-  }
-  function submitEntry(ev){
-    ev.preventDefault(); const full=safeInt($('fullCount').value),half=safeInt($('halfCount').value); if(!full&&!half){toast('Enter at least one full or half box.');return;}
-    const editId=$('editingId').value; const existing=entries.find(e=>e.id===editId); const stamp=nowISO();
-    if(existing){ Object.assign(existing,{quality:$('modalQuality').value,fullCount:full,halfCount:half,workerNum:selectedWorkerNum,foamBox:$('foamBox').checked,updatedAt:stamp}); toast('Entry updated.'); }
-    else entries.push({id:id(),date:localDateISO(),quality:$('modalQuality').value,fullCount:full,halfCount:half,workerNum:selectedWorkerNum,foamBox:$('foamBox').checked,delivered:false,deliveredAt:null,createdAt:stamp,updatedAt:stamp});
-    saveEntries(); closeEntry(); renderAll(); if(!existing)toast('Production saved.');
-  }
-  function editEntry(id){ const e=entries.find(x=>x.id===id); if(e)openEntry(e.quality,e); }
-  function deleteEntry(id){ const e=entries.find(x=>x.id===id); if(!e)return; if(confirm(`Delete this ${e.quality} entry (${e.fullCount} full, ${e.halfCount} half)?`)){ entries=entries.filter(x=>x.id!==id); selectedIds.delete(id); saveEntries(); renderAll(); toast('Entry deleted.'); } }
 
-  function renderWorkers(){
-    $('workerCount').textContent=`${workers.length} of ${MAX_WORKERS} workers`;
-    $('workerList').innerHTML=workers.map(w=>`<div class="worker-row"><div class="worker-num">#${w.number}</div><div class="worker-name">${escapeHtml(w.name)}</div><button class="edit-worker" data-num="${w.number}">Edit</button></div>`).join('');
-    document.querySelectorAll('.edit-worker').forEach(btn=>btn.addEventListener('click',()=>showWorkerForm(parseInt(btn.dataset.num,10))));
-  }
-  function showWorkerForm(num=null){
-    editingWorkerOriginalNumber=num; const w=num!==null?getWorker(num):null; $('workerNumber').value=w?.number||''; $('workerName').value=w?.name||''; $('workerForm').classList.add('show'); $('workerNumber').focus();
-  }
-  function hideWorkerForm(){ editingWorkerOriginalNumber=null; $('workerForm').classList.remove('show'); $('workerNumber').value='';$('workerName').value=''; }
-  function saveWorker(){
-    const num=parseInt($('workerNumber').value,10),name=$('workerName').value.trim(); if(!Number.isFinite(num)||num<1){toast('Enter a valid worker number.');return;} if(!name){toast('Enter the worker name.');return;}
-    const collision=workers.some(w=>w.number===num&&w.number!==editingWorkerOriginalNumber); if(collision){toast(`Worker #${num} already exists.`);return;}
-    if(editingWorkerOriginalNumber===null && workers.length>=MAX_WORKERS){toast(`Maximum ${MAX_WORKERS} workers.`);return;}
-    if(editingWorkerOriginalNumber!==null){ const w=getWorker(editingWorkerOriginalNumber); if(w){ const old=w.number; w.number=num; w.name=name; if(old!==num) entries.forEach(e=>{if(e.workerNum===old)e.workerNum=num;}); saveEntries(); }} else workers.push({number:num,name});
-    workers.sort((a,b)=>a.number-b.number); saveWorkers(); hideWorkerForm(); renderAll(); toast('Worker saved.');
+
+  /* -----------------------------------
+     WORKER SUMMARY
+  ----------------------------------- */
+
+  function renderPeopleSummary(list) {
+
+    const grouped =
+      new Map();
+
+
+    list
+      .filter(
+        e =>
+          e.workerNum
+      )
+      .forEach(
+        e => {
+
+          if (
+            !grouped.has(
+              e.workerNum
+            )
+          ) {
+
+            grouped.set(
+              e.workerNum,
+              []
+            );
+          }
+
+
+          grouped
+            .get(
+              e.workerNum
+            )
+            .push(e);
+
+        }
+      );
+
+
+    if (
+      !grouped.size
+    ) {
+
+      $('peopleSummary').innerHTML =
+        `
+          <div class="empty">
+            No worker-assigned entries in this range.
+          </div>
+        `;
+
+      return;
+    }
+
+
+    $('peopleSummary').innerHTML =
+
+      [
+        ...grouped.entries()
+      ]
+
+      .sort(
+        (a,b) =>
+          a[0] - b[0]
+      )
+
+      .map(
+        ([num,arr]) => {
+
+          const w =
+            getWorker(num);
+
+
+          const t =
+            totalPair(arr);
+
+
+          const c =
+            counts(arr);
+
+
+          const detail =
+            QUALITIES
+
+            .filter(
+              q =>
+                c[q].full ||
+                c[q].half
+            )
+
+            .map(
+              q =>
+                `${q}: ${c[q].full} F / ${c[q].half} H`
+            )
+
+            .join(' · ');
+
+
+          return `
+
+            <div class="person-card">
+
+              <div class="person-top">
+
+                <span>
+                  #${num}
+                  ${escapeHtml(w?.name || 'Unknown')}
+                </span>
+
+                <span>
+                  ${t.full} F ·
+                  ${t.half} H
+                </span>
+
+              </div>
+
+              <div class="person-detail">
+                ${detail || 'No boxes'}
+              </div>
+
+            </div>
+
+          `;
+        }
+      )
+
+      .join('');
   }
 
-  function copyReport(){
-    const all=todayEntries(),display=dashboardMode==='room'?all.filter(e=>!e.delivered):all,c=counts(display),bc={full:c.B.full+c.MB.full,half:c.B.half+c.MB.half};
-    const heading=dashboardMode==='room'?'Transmission room':'Total production';
-    const lines=[`${heading} — ${prettyDate(localDateISO())}`,`B (B + MB): ${bc.full} full and ${bc.half} half`,`B+: ${c['B+'].full} full and ${c['B+'].half} half`,`C+: ${c['C+'].full} full and ${c['C+'].half} half`,`BS: ${c.BS.full} full and ${c.BS.half} half`,`Details — B: ${c.B.full} full / ${c.B.half} half; MB: ${c.MB.full} full / ${c.MB.half} half`];
-    const text=lines.join('\n');
-    if(navigator.clipboard?.writeText){navigator.clipboard.writeText(text).then(()=>toast('Report copied.')).catch(()=>fallbackCopy(text));} else fallbackCopy(text);
-  }
-  function fallbackCopy(text){ const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Report copied.'); }
 
-  function exportCsv(){
-    const header=['date','created_at','quality','full_boxes','half_boxes','worker_number','worker_name','foam_box','status','delivered_at'];
-    const rows=entries.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(e=>{const w=getWorker(e.workerNum);return [e.date,e.createdAt,e.quality,e.fullCount,e.halfCount,e.workerNum||'',w?.name||'',e.foamBox?'yes':'no',e.delivered?'delivered':'in_room',e.deliveredAt||''];});
-    const esc=v=>`"${String(v??'').replaceAll('"','""')}"`; download(`salmon-production-${localDateISO()}.csv`,[header,...rows].map(r=>r.map(esc).join(',')).join('\n'),'text/csv;charset=utf-8');
-  }
-  function exportJson(){ download(`salmon-backup-${localDateISO()}.json`,JSON.stringify({version:6,exportedAt:nowISO(),entries,workers},null,2),'application/json'); }
-  function download(name,text,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000); }
-  function importJson(file){
-    const reader=new FileReader(); reader.onload=()=>{ try{ const data=JSON.parse(reader.result); const importedEntries=Array.isArray(data)?data:(data.entries||[]); const importedWorkers=Array.isArray(data.workers)?data.workers:null; if(!Array.isArray(importedEntries))throw new Error('No entries'); if(!confirm(`Restore ${importedEntries.length} production entries? This will replace the current production log.`))return; entries=importedEntries.map(normalizeEntry); if(importedWorkers?.length)workers=importedWorkers.map(w=>({number:parseInt(w.number,10),name:String(w.name||'').trim()})).filter(w=>Number.isFinite(w.number)&&w.name).slice(0,MAX_WORKERS).sort((a,b)=>a.number-b.number); saveEntries();saveWorkers();selectedIds.clear();renderAll();toast('Backup restored.'); }catch(e){alert('That file is not a valid Salmon Tracker backup.');} finally{$('importFile').value='';} }; reader.readAsText(file);
-  }
 
-  function escapeHtml(s){ return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  /* -----------------------------------
+     MULTI SELECT / DELIVERY
+  ----------------------------------- */
 
-  function renderAll(){ renderHeader(); renderQualityGrid(); renderRecent(); renderDashboard(); renderFilters(); renderLogs(); renderWorkers(); }
+  function renderBatchBar() {
 
-  function bind(){
-    document.querySelectorAll('.bottom-nav button').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b===btn)); document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); $(`tab-${btn.dataset.tab}`).classList.add('active'); if(btn.dataset.tab==='dashboard')renderDashboard(); if(btn.dataset.tab==='logs')renderLogs(); }));
-    $('dashboardMode').addEventListener('click',e=>{const b=e.target.closest('button[data-mode]');if(!b)return;dashboardMode=b.dataset.mode;document.querySelectorAll('#dashboardMode button').forEach(x=>x.classList.toggle('active',x===b));renderDashboard();});
-    $('entryForm').addEventListener('submit',submitEntry); $('closeModalBtn').addEventListener('click',closeEntry); $('cancelEntryBtn').addEventListener('click',closeEntry); $('entryModal').addEventListener('click',e=>{if(e.target===$('entryModal'))closeEntry();});
-    ['filterRange','filterWorker','filterQuality','filterStatus','filterFrom','filterTo'].forEach(id=>$(id).addEventListener('change',()=>{ if(id==='filterRange')renderFilters(); selectedIds.clear();renderLogs(); }));
-    $('selectAllBtn').addEventListener('click',selectVisible); $('clearSelectionBtn').addEventListener('click',()=>{selectedIds.clear();renderLogs();}); $('markDeliveredBtn').addEventListener('click',()=>markSelected(true)); $('markRoomBtn').addEventListener('click',()=>markSelected(false));
-    $('clearFiltersBtn').addEventListener('click',()=>{$('filterRange').value='today';$('filterWorker').value='all';$('filterQuality').value='all';$('filterStatus').value='all';$('filterFrom').value='';$('filterTo').value='';selectedIds.clear();renderFilters();renderLogs();});
-    $('copyReportBtn').addEventListener('click',copyReport);
-    $('addWorkerBtn').addEventListener('click',()=>showWorkerForm(null)); $('cancelWorkerBtn').addEventListener('click',hideWorkerForm); $('saveWorkerBtn').addEventListener('click',saveWorker);
-    $('exportCsvBtn').addEventListener('click',exportCsv); $('exportJsonBtn').addEventListener('click',exportJson); $('importJsonBtn').addEventListener('click',()=>$('importFile').click()); $('importFile').addEventListener('change',()=>{if($('importFile').files[0])importJson($('importFile').files[0]);});
-    $('clearEntriesBtn').addEventListener('click',()=>{if(confirm('Delete ALL production entries from this device? Worker names will stay.')){entries=[];selectedIds.clear();saveEntries();renderAll();toast('Production log cleared.');}});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('entryModal').classList.contains('open'))closeEntry();});
+    $('batchbar')
+      .classList
+      .toggle(
+        'show',
+        selectedIds.size > 0
+      );
+
+
+    $('batchCount').textContent =
+      `${selectedIds.size} selected`;
   }
 
-  entries=loadEntries(); workers=loadWorkers(); saveEntries(); saveWorkers(); bind(); renderAll();
+
+
+  function toggleSelection(id) {
+
+    if (
+      selectedIds.has(id)
+    ) {
+
+      selectedIds.delete(id);
+
+    }
+
+    else {
+
+      selectedIds.add(id);
+
+    }
+
+
+    renderLogs();
+  }
+
+
+
+  function selectVisible() {
+
+    const ids =
+      filteredEntries()
+      .map(
+        e =>
+          e.id
+      );
+
+
+    const allSelected =
+
+      ids.length
+
+      &&
+
+      ids.every(
+        x =>
+          selectedIds.has(x)
+      );
+
+
+    ids.forEach(
+      x => {
+
+        if (
+          allSelected
+        ) {
+
+          selectedIds.delete(x);
+
+        }
+
+        else {
+
+          selectedIds.add(x);
+
+        }
+
+      }
+    );
+
+
+    renderLogs();
+  }
+
+
+
+  function setEntryDelivery(
+    id,
+    delivered
+  ) {
+
+    const e =
+      entries.find(
+        x =>
+          x.id === id
+      );
+
+
+    if (!e) return;
+
+
+    const stamp =
+      nowISO();
+
+
+    e.delivered =
+      delivered;
+
+
+    e.deliveredAt =
+      delivered
+        ? stamp
+        : null;
+
+
+    e.updatedAt =
+      stamp;
+
+
+    saveEntries();
+
+    renderAll();
+
+
+    toast(
+      delivered
+        ? 'Marked delivered.'
+        : 'Marked in room.'
+    );
+  }
+
+
+
+  function toggleEntryDelivery(id) {
+
+    const e =
+      entries.find(
+        x =>
+          x.id === id
+      );
+
+
+    if (e) {
+
+      setEntryDelivery(
+        id,
+        !e.delivered
+      );
+
+    }
+  }
+
+
+
+  function markSelected(
+    delivered
+  ) {
+
+    if (
+      !selectedIds.size
+    ) {
+
+      return;
+    }
+
+
+    const stamp =
+      nowISO();
+
+
+    entries =
+      entries.map(
+        e => {
+
+          if (
+            selectedIds.has(
+              e.id
+            )
+          ) {
+
+            return {
+
+              ...e,
+
+              delivered,
+
+              deliveredAt:
+                delivered
+                  ? stamp
+                  : null,
+
+              updatedAt:
+                stamp
+
+            };
+          }
+
+
+          return e;
+        }
+      );
+
+
+    saveEntries();
+
+
+    selectedIds.clear();
+
+
+    renderAll();
+
+
+    toast(
+      delivered
+        ? 'Selected entries marked delivered.'
+        : 'Selected entries marked in room.'
+    );
+  }
+
+
+
+  /* -----------------------------------
+     ADD / EDIT ENTRY
+  ----------------------------------- */
+
+  function openEntry(
+    quality,
+    existing = null
+  ) {
+
+    selectedWorkerNum =
+      existing?.workerNum ||
+      null;
+
+
+    $('editingId').value =
+      existing?.id || '';
+
+
+    $('modalQuality').value =
+      quality;
+
+
+    $('editQuality').value =
+      quality;
+
+
+    $('fullCount').value =
+      existing?.fullCount ||
+      0;
+
+
+    $('halfCount').value =
+      existing?.halfCount ||
+      0;
+
+
+    $('foamBox').checked =
+      Boolean(
+        existing?.foamBox
+      );
+
+
+    $('modalWorker').value =
+      selectedWorkerNum ||
+      '';
+
+
+    $('modalModeLabel').textContent =
+      existing
+        ? 'Edit production'
+        : 'New production · today';
+
+
+    $('modalTitle').textContent =
+      `${existing ? 'Edit' : 'Add'} ${quality}`;
+
+
+    $('saveEntryBtn').textContent =
+      existing
+        ? 'Save changes'
+        : 'Save production';
+
+
+    renderWorkerChips();
+
+
+    $('entryModal')
+      .classList
+      .add(
+        'open'
+      );
+
+
+    setTimeout(
+      () =>
+        $('fullCount').focus(),
+      80
+    );
+  }
+
+
+
+  function closeEntry() {
+
+    $('entryModal')
+      .classList
+      .remove(
+        'open'
+      );
+
+
+    selectedWorkerNum =
+      null;
+  }
+
+
+
+  function renderWorkerChips() {
+
+    let html = `
+
+      <button
+        type="button"
+        class="
+          worker-chip
+          none
+          ${
+            selectedWorkerNum === null
+              ? 'selected'
+              : ''
+          }
+        "
+        data-worker=""
+      >
+        No worker
+      </button>
+
+    `;
+
+
+    workers.forEach(
+      w => {
+
+        html += `
+
+          <button
+            type="button"
+            class="
+              worker-chip
+              ${
+                selectedWorkerNum === w.number
+                  ? 'selected'
+                  : ''
+              }
+            "
+            data-worker="${w.number}"
+          >
+
+            <span class="num">
+              #${w.number}
+            </span>
+
+            <span class="name">
+              ${escapeHtml(w.name)}
+            </span>
+
+          </button>
+
+        `;
+
+      }
+    );
+
+
+    $('workerChips').innerHTML =
+      html;
+
+
+    document
+      .querySelectorAll(
+        '.worker-chip'
+      )
+      .forEach(
+        btn =>
+          btn.addEventListener(
+            'click',
+            () => {
+
+              selectedWorkerNum =
+
+                btn.dataset.worker === ''
+
+                ? null
+
+                : parseInt(
+                    btn.dataset.worker,
+                    10
+                  );
+
+
+              $('modalWorker').value =
+                selectedWorkerNum ||
+                '';
+
+
+              renderWorkerChips();
+
+            }
+          )
+      );
+  }
+
+
+
+  function submitEntry(ev) {
+
+    ev.preventDefault();
+
+
+    const full =
+      safeInt(
+        $('fullCount').value
+      );
+
+
+    const half =
+      safeInt(
+        $('halfCount').value
+      );
+
+
+    if (
+      !full &&
+      !half
+    ) {
+
+      toast(
+        'Enter at least one full or half box.'
+      );
+
+      return;
+    }
+
+
+    const editId =
+      $('editingId').value;
+
+
+    const existing =
+      entries.find(
+        e =>
+          e.id === editId
+      );
+
+
+    const stamp =
+      nowISO();
+
+
+    const quality =
+      $('editQuality').value;
+
+
+    $('modalQuality').value =
+      quality;
+
+
+    if (
+      existing
+    ) {
+
+      Object.assign(
+        existing,
+        {
+
+          quality,
+
+          fullCount:full,
+
+          halfCount:half,
+
+          workerNum:
+            selectedWorkerNum,
+
+          foamBox:
+            $('foamBox').checked,
+
+          updatedAt:
+            stamp
+
+        }
+      );
+
+
+      toast(
+        'Entry updated.'
+      );
+
+    }
+
+    else {
+
+      entries.push({
+
+        id:
+          id(),
+
+        date:
+          localDateISO(),
+
+        quality,
+
+        fullCount:full,
+
+        halfCount:half,
+
+        workerNum:
+          selectedWorkerNum,
+
+        foamBox:
+          $('foamBox').checked,
+
+        delivered:false,
+
+        deliveredAt:null,
+
+        createdAt:stamp,
+
+        updatedAt:stamp
+
+      });
+
+    }
+
+
+    saveEntries();
+
+    closeEntry();
+
+    renderAll();
+
+
+    if (
+      !existing
+    ) {
+
+      toast(
+        'Production saved.'
+      );
+
+    }
+  }
+
+
+
+  function editEntry(id) {
+
+    const e =
+      entries.find(
+        x =>
+          x.id === id
+      );
+
+
+    if (e) {
+
+      openEntry(
+        e.quality,
+        e
+      );
+
+    }
+  }
+
+
+
+  function deleteEntry(id) {
+
+    const e =
+      entries.find(
+        x =>
+          x.id === id
+      );
+
+
+    if (!e) return;
+
+
+    if (
+      confirm(
+        `Delete this ${e.quality} entry (${e.fullCount} full, ${e.halfCount} half)?`
+      )
+    ) {
+
+      entries =
+        entries.filter(
+          x =>
+            x.id !== id
+        );
+
+
+      selectedIds.delete(id);
+
+
+      saveEntries();
+
+      renderAll();
+
+
+      toast(
+        'Entry deleted.'
+      );
+    }
+  }
+
+
+
+  /* -----------------------------------
+     WORKER MANAGEMENT
+  ----------------------------------- */
+
+  function renderWorkers() {
+
+    $('workerCount').textContent =
+      `${workers.length} of ${MAX_WORKERS} workers`;
+
+
+    $('workerList').innerHTML =
+
+      workers
+      .map(
+        w => `
+
+          <div class="worker-row">
+
+            <div class="worker-num">
+              #${w.number}
+            </div>
+
+            <div class="worker-name">
+              ${escapeHtml(w.name)}
+            </div>
+
+            <button
+              class="edit-worker"
+              data-num="${w.number}"
+            >
+              Edit
+            </button>
+
+          </div>
+
+        `
+      )
+      .join('');
+
+
+    document
+      .querySelectorAll(
+        '.edit-worker'
+      )
+      .forEach(
+        btn =>
+          btn.addEventListener(
+            'click',
+            () =>
+              showWorkerForm(
+                parseInt(
+                  btn.dataset.num,
+                  10
+                )
+              )
+          )
+      );
+  }
+
+
+
+  function showWorkerForm(
+    num = null
+  ) {
+
+    editingWorkerOriginalNumber =
+      num;
+
+
+    const w =
+      num !== null
+        ? getWorker(num)
+        : null;
+
+
+    $('workerNumber').value =
+      w?.number || '';
+
+
+    $('workerName').value =
+      w?.name || '';
+
+
+    $('workerForm')
+      .classList
+      .add(
+        'show'
+      );
+
+
+    $('workerNumber').focus();
+  }
+
+
+
+  function hideWorkerForm() {
+
+    editingWorkerOriginalNumber =
+      null;
+
+
+    $('workerForm')
+      .classList
+      .remove(
+        'show'
+      );
+
+
+    $('workerNumber').value =
+      '';
+
+
+    $('workerName').value =
+      '';
+  }
+
+
+
+  function saveWorker() {
+
+    const num =
+      parseInt(
+        $('workerNumber').value,
+        10
+      );
+
+
+    const name =
+      $('workerName')
+      .value
+      .trim();
+
+
+    if (
+      !Number.isFinite(num) ||
+      num < 1
+    ) {
+
+      toast(
+        'Enter a valid worker number.'
+      );
+
+      return;
+    }
+
+
+    if (!name) {
+
+      toast(
+        'Enter the worker name.'
+      );
+
+      return;
+    }
+
+
+    const collision =
+      workers.some(
+        w =>
+          w.number === num
+          &&
+          w.number !==
+            editingWorkerOriginalNumber
+      );
+
+
+    if (collision) {
+
+      toast(
+        `Worker #${num} already exists.`
+      );
+
+      return;
+    }
+
+
+    if (
+      editingWorkerOriginalNumber === null
+      &&
+      workers.length >= MAX_WORKERS
+    ) {
+
+      toast(
+        `Maximum ${MAX_WORKERS} workers.`
+      );
+
+      return;
+    }
+
+
+    if (
+      editingWorkerOriginalNumber !== null
+    ) {
+
+      const w =
+        getWorker(
+          editingWorkerOriginalNumber
+        );
+
+
+      if (w) {
+
+        const old =
+          w.number;
+
+
+        w.number =
+          num;
+
+
+        w.name =
+          name;
+
+
+        if (
+          old !== num
+        ) {
+
+          entries.forEach(
+            e => {
+
+              if (
+                e.workerNum === old
+              ) {
+
+                e.workerNum =
+                  num;
+
+              }
+
+            }
+          );
+
+        }
+
+
+        saveEntries();
+      }
+
+    }
+
+    else {
+
+      workers.push({
+
+        number:num,
+
+        name
+
+      });
+
+    }
+
+
+    workers.sort(
+      (a,b) =>
+        a.number - b.number
+    );
+
+
+    saveWorkers();
+
+    hideWorkerForm();
+
+    renderAll();
+
+
+    toast(
+      'Worker saved.'
+    );
+  }
+
+
+
+  /* -----------------------------------
+     COPY REPORT
+  ----------------------------------- */
+
+  function copyReport() {
+
+    const all =
+      todayEntries();
+
+
+    const display =
+
+      dashboardMode === 'room'
+
+      ? all.filter(
+          e =>
+            !e.delivered
+        )
+
+      : all;
+
+
+    const c =
+      counts(display);
+
+
+    const bc = {
+
+      full:
+        c.B.full +
+        c.MB.full,
+
+      half:
+        c.B.half +
+        c.MB.half
+
+    };
+
+
+    const heading =
+
+      dashboardMode === 'room'
+
+      ? 'Transmission room'
+
+      : 'Total production';
+
+
+    const lines = [
+
+      `${heading} — ${prettyDate(localDateISO())}`,
+
+      `B (B + MB): ${bc.full} full and ${bc.half} half`,
+
+      `B+: ${c['B+'].full} full and ${c['B+'].half} half`,
+
+      `C+: ${c['C+'].full} full and ${c['C+'].half} half`,
+
+      `BS: ${c.BS.full} full and ${c.BS.half} half`,
+
+      `Details — B: ${c.B.full} full / ${c.B.half} half; MB: ${c.MB.full} full / ${c.MB.half} half`
+
+    ];
+
+
+    const text =
+      lines.join('\n');
+
+
+    if (
+      navigator.clipboard?.writeText
+    ) {
+
+      navigator.clipboard
+        .writeText(text)
+        .then(
+          () =>
+            toast(
+              'Report copied.'
+            )
+        )
+        .catch(
+          () =>
+            fallbackCopy(text)
+        );
+
+    }
+
+    else {
+
+      fallbackCopy(text);
+
+    }
+  }
+
+
+
+  function fallbackCopy(text) {
+
+    const ta =
+      document.createElement(
+        'textarea'
+      );
+
+
+    ta.value =
+      text;
+
+
+    document.body.appendChild(
+      ta
+    );
+
+
+    ta.select();
+
+
+    document.execCommand(
+      'copy'
+    );
+
+
+    ta.remove();
+
+
+    toast(
+      'Report copied.'
+    );
+  }
+
+
+
+  /* -----------------------------------
+     CSV EXPORT
+  ----------------------------------- */
+
+  function exportCsv() {
+
+    const header = [
+
+      'date',
+
+      'created_at',
+
+      'quality',
+
+      'full_boxes',
+
+      'half_boxes',
+
+      'worker_number',
+
+      'worker_name',
+
+      'foam_box',
+
+      'status',
+
+      'delivered_at'
+
+    ];
+
+
+    const rows =
+
+      entries
+      .slice()
+      .sort(
+        (a,b) =>
+          a.date.localeCompare(
+            b.date
+          )
+      )
+      .map(
+        e => {
+
+          const w =
+            getWorker(
+              e.workerNum
+            );
+
+
+          return [
+
+            e.date,
+
+            e.createdAt,
+
+            e.quality,
+
+            e.fullCount,
+
+            e.halfCount,
+
+            e.workerNum || '',
+
+            w?.name || '',
+
+            e.foamBox
+              ? 'yes'
+              : 'no',
+
+            e.delivered
+              ? 'delivered'
+              : 'in_room',
+
+            e.deliveredAt || ''
+
+          ];
+
+        }
+      );
+
+
+    const esc =
+      v =>
+        `"${String(v ?? '').replaceAll('"','""')}"`;
+
+
+    download(
+
+      `salmon-production-${localDateISO()}.csv`,
+
+      [
+        header,
+        ...rows
+      ]
+      .map(
+        r =>
+          r.map(esc)
+          .join(',')
+      )
+      .join('\n'),
+
+      'text/csv;charset=utf-8'
+
+    );
+  }
+
+
+
+  /* -----------------------------------
+     JSON BACKUP
+  ----------------------------------- */
+
+  function exportJson() {
+
+    download(
+
+      `salmon-backup-${localDateISO()}.json`,
+
+      JSON.stringify(
+        {
+
+          version:6,
+
+          exportedAt:
+            nowISO(),
+
+          entries,
+
+          workers
+
+        },
+
+        null,
+
+        2
+      ),
+
+      'application/json'
+
+    );
+  }
+
+
+
+  function download(
+    name,
+    text,
+    type
+  ) {
+
+    const blob =
+      new Blob(
+        [text],
+        {type}
+      );
+
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const a =
+      document.createElement(
+        'a'
+      );
+
+
+    a.href =
+      url;
+
+
+    a.download =
+      name;
+
+
+    document.body.appendChild(
+      a
+    );
+
+
+    a.click();
+
+
+    a.remove();
+
+
+    setTimeout(
+      () =>
+        URL.revokeObjectURL(
+          url
+        ),
+      1000
+    );
+  }
+
+
+
+  /* -----------------------------------
+     IMPORT BACKUP
+  ----------------------------------- */
+
+  function importJson(file) {
+
+    const reader =
+      new FileReader();
+
+
+    reader.onload =
+      () => {
+
+        try {
+
+          const data =
+            JSON.parse(
+              reader.result
+            );
+
+
+          const importedEntries =
+
+            Array.isArray(data)
+
+            ? data
+
+            : (
+                data.entries ||
+                []
+              );
+
+
+          const importedWorkers =
+
+            Array.isArray(
+              data.workers
+            )
+
+            ? data.workers
+
+            : null;
+
+
+          if (
+            !Array.isArray(
+              importedEntries
+            )
+          ) {
+
+            throw new Error(
+              'No entries'
+            );
+          }
+
+
+          if (
+            !confirm(
+              `Restore ${importedEntries.length} production entries? This will replace the current production log.`
+            )
+          ) {
+
+            return;
+          }
+
+
+          entries =
+            importedEntries.map(
+              normalizeEntry
+            );
+
+
+          if (
+            importedWorkers?.length
+          ) {
+
+            workers =
+              importedWorkers
+
+              .map(
+                w => ({
+
+                  number:
+                    parseInt(
+                      w.number,
+                      10
+                    ),
+
+                  name:
+                    String(
+                      w.name || ''
+                    ).trim()
+
+                })
+              )
+
+              .filter(
+                w =>
+                  Number.isFinite(
+                    w.number
+                  )
+                  &&
+                  w.name
+              )
+
+              .slice(
+                0,
+                MAX_WORKERS
+              )
+
+              .sort(
+                (a,b) =>
+                  a.number -
+                  b.number
+              );
+          }
+
+
+          saveEntries();
+
+          saveWorkers();
+
+          selectedIds.clear();
+
+          renderAll();
+
+
+          toast(
+            'Backup restored.'
+          );
+
+        }
+
+        catch(e) {
+
+          alert(
+            'That file is not a valid Salmon Tracker backup.'
+          );
+
+        }
+
+        finally {
+
+          $('importFile').value =
+            '';
+
+        }
+      };
+
+
+    reader.readAsText(
+      file
+    );
+  }
+
+
+
+  /* -----------------------------------
+     HTML SAFETY
+  ----------------------------------- */
+
+  function escapeHtml(s) {
+
+    return String(
+      s ?? ''
+    )
+    .replace(
+      /[&<>'"]/g,
+      c => ({
+
+        '&':'&amp;',
+
+        '<':'&lt;',
+
+        '>':'&gt;',
+
+        "'":'&#39;',
+
+        '"':'&quot;'
+
+      }[c])
+    );
+  }
+
+
+
+  /* -----------------------------------
+     RENDER EVERYTHING
+  ----------------------------------- */
+
+  function renderAll() {
+
+    renderHeader();
+
+    renderQualityGrid();
+
+    renderRecent();
+
+    renderDashboard();
+
+    renderFilters();
+
+    renderLogs();
+
+    renderWorkers();
+  }
+
+
+
+  /* -----------------------------------
+     EVENT LISTENERS
+  ----------------------------------- */
+
+  function bind() {
+
+
+    document
+      .querySelectorAll(
+        '.bottom-nav button'
+      )
+      .forEach(
+        btn =>
+          btn.addEventListener(
+            'click',
+            () => {
+
+              document
+                .querySelectorAll(
+                  '.bottom-nav button'
+                )
+                .forEach(
+                  b =>
+                    b.classList.toggle(
+                      'active',
+                      b === btn
+                    )
+                );
+
+
+              document
+                .querySelectorAll(
+                  '.tab'
+                )
+                .forEach(
+                  t =>
+                    t.classList.remove(
+                      'active'
+                    )
+                );
+
+
+              $(
+                `tab-${btn.dataset.tab}`
+              )
+              .classList
+              .add(
+                'active'
+              );
+
+
+              if (
+                btn.dataset.tab ===
+                'dashboard'
+              ) {
+
+                renderDashboard();
+
+              }
+
+
+              if (
+                btn.dataset.tab ===
+                'logs'
+              ) {
+
+                renderLogs();
+
+              }
+
+            }
+          )
+      );
+
+
+    $('dashboardMode')
+      .addEventListener(
+        'click',
+        e => {
+
+          const b =
+            e.target.closest(
+              'button[data-mode]'
+            );
+
+
+          if (!b) return;
+
+
+          dashboardMode =
+            b.dataset.mode;
+
+
+          document
+            .querySelectorAll(
+              '#dashboardMode button'
+            )
+            .forEach(
+              x =>
+                x.classList.toggle(
+                  'active',
+                  x === b
+                )
+            );
+
+
+          renderDashboard();
+
+        }
+      );
+
+
+    $('entryForm')
+      .addEventListener(
+        'submit',
+        submitEntry
+      );
+
+
+    $('editQuality')
+      .addEventListener(
+        'change',
+        () => {
+
+          $('modalQuality').value =
+            $('editQuality').value;
+
+
+          $('modalTitle').textContent =
+
+            `${
+              $('editingId').value
+                ? 'Edit'
+                : 'Add'
+            } ${$('editQuality').value}`;
+
+        }
+      );
+
+
+    $('closeModalBtn')
+      .addEventListener(
+        'click',
+        closeEntry
+      );
+
+
+    $('cancelEntryBtn')
+      .addEventListener(
+        'click',
+        closeEntry
+      );
+
+
+    $('entryModal')
+      .addEventListener(
+        'click',
+        e => {
+
+          if (
+            e.target ===
+            $('entryModal')
+          ) {
+
+            closeEntry();
+
+          }
+        }
+      );
+
+
+    [
+      'filterRange',
+      'filterWorker',
+      'filterQuality',
+      'filterStatus',
+      'filterFrom',
+      'filterTo'
+    ]
+    .forEach(
+      id =>
+        $(id)
+        .addEventListener(
+          'change',
+          () => {
+
+            if (
+              id ===
+              'filterRange'
+            ) {
+
+              renderFilters();
+
+            }
+
+
+            selectedIds.clear();
+
+            renderLogs();
+
+          }
+        )
+    );
+
+
+    $('selectAllBtn')
+      .addEventListener(
+        'click',
+        selectVisible
+      );
+
+
+    $('clearSelectionBtn')
+      .addEventListener(
+        'click',
+        () => {
+
+          selectedIds.clear();
+
+          renderLogs();
+
+        }
+      );
+
+
+    $('markDeliveredBtn')
+      .addEventListener(
+        'click',
+        () =>
+          markSelected(
+            true
+          )
+      );
+
+
+    $('markRoomBtn')
+      .addEventListener(
+        'click',
+        () =>
+          markSelected(
+            false
+          )
+      );
+
+
+    $('clearFiltersBtn')
+      .addEventListener(
+        'click',
+        () => {
+
+          $('filterRange').value =
+            'today';
+
+          $('filterWorker').value =
+            'all';
+
+          $('filterQuality').value =
+            'all';
+
+          $('filterStatus').value =
+            'all';
+
+          $('filterFrom').value =
+            '';
+
+          $('filterTo').value =
+            '';
+
+
+          selectedIds.clear();
+
+
+          renderFilters();
+
+          renderLogs();
+
+        }
+      );
+
+
+    $('copyReportBtn')
+      .addEventListener(
+        'click',
+        copyReport
+      );
+
+
+    $('addWorkerBtn')
+      .addEventListener(
+        'click',
+        () =>
+          showWorkerForm(
+            null
+          )
+      );
+
+
+    $('cancelWorkerBtn')
+      .addEventListener(
+        'click',
+        hideWorkerForm
+      );
+
+
+    $('saveWorkerBtn')
+      .addEventListener(
+        'click',
+        saveWorker
+      );
+
+
+    $('exportCsvBtn')
+      .addEventListener(
+        'click',
+        exportCsv
+      );
+
+
+    $('exportJsonBtn')
+      .addEventListener(
+        'click',
+        exportJson
+      );
+
+
+    $('importJsonBtn')
+      .addEventListener(
+        'click',
+        () =>
+          $('importFile').click()
+      );
+
+
+    $('importFile')
+      .addEventListener(
+        'change',
+        () => {
+
+          if (
+            $('importFile').files[0]
+          ) {
+
+            importJson(
+              $('importFile').files[0]
+            );
+
+          }
+        }
+      );
+
+
+    $('clearEntriesBtn')
+      .addEventListener(
+        'click',
+        () => {
+
+          if (
+            confirm(
+              'Delete ALL production entries from this device? Worker names will stay.'
+            )
+          ) {
+
+            entries = [];
+
+            selectedIds.clear();
+
+            saveEntries();
+
+            renderAll();
+
+            toast(
+              'Production log cleared.'
+            );
+
+          }
+        }
+      );
+
+
+    document
+      .addEventListener(
+        'keydown',
+        e => {
+
+          if (
+            e.key === 'Escape'
+            &&
+            $('entryModal')
+              .classList
+              .contains(
+                'open'
+              )
+          ) {
+
+            closeEntry();
+
+          }
+        }
+      );
+  }
+
+
+
+  /* -----------------------------------
+     START APP
+  ----------------------------------- */
+
+  entries =
+    loadEntries();
+
+
+  workers =
+    loadWorkers();
+
+
+  saveEntries();
+
+  saveWorkers();
+
+
+  bind();
+
+  renderAll();
+
 })();
 </script>
+
 </body>
 </html>
